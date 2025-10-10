@@ -69,72 +69,70 @@ export default function HistoryPage() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-grow flex flex-col items-center justify-center p-8">
-          <div className="flex justify-center mb-4">
+        <main className="flex-grow flex flex-col items-center p-8"> {/* Removed justify-center */}
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Your History</h2> {/* Added a main title */}
+          <div className="flex justify-center mb-6"> {/* Adjusted margin-bottom */}
             <button
               onClick={() => setActiveTab('checkins')}
-              className={`py-2 px-4 rounded-l-lg text-sm font-medium ${activeTab === 'checkins' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              className={`py-3 px-8 rounded-l-lg text-lg font-bold transition duration-300 ease-in-out ${activeTab === 'checkins' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
             >
               Check-in History
             </button>
             <button
               onClick={() => setActiveTab('baseline_traits')}
-              className={`py-2 px-4 rounded-r-lg text-sm font-medium ${activeTab === 'baseline_traits' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              className={`py-3 px-8 rounded-r-lg text-lg font-bold transition duration-300 ease-in-out ${activeTab === 'baseline_traits' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
             >
               Baseline Traits History
             </button>
           </div>
-          <section className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
-            <div className="max-h-[500px] overflow-y-auto">
+
+          <section className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-8"> {/* Increased max-w and padding */}
+            <div className="max-h-[500px] overflow-y-auto"> {/* Increased max-h */}
               {activeTab === 'checkins' && (
-                <div className="flex flex-col gap-4 pt-2 px-6 box-border w-full">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Check-in History</h3>
+                <div className="flex flex-col gap-5"> {/* Increased gap */}
                   {checkins.length > 0 ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-4"> {/* Increased space-y */}
                       {checkins.map((checkin) => (
-                        <li key={checkin.id} className="bg-gray-50 p-3 rounded-md shadow-sm">
-                          <div className="text-gray-700">
-                            <strong>Emotion:</strong> {checkin.mood_score}
-                          </div>
-                          <div className="text-gray-700">
-                            <strong>Energy:</strong> {checkin.energy_level}
-                          </div>
+                        <li key={checkin.id} className="bg-blue-50 p-5 rounded-lg shadow-md border border-blue-200"> {/* Enhanced styling */}
+                          <p className="text-gray-800 text-lg mb-1">
+                            <strong>Emotion:</strong> <span className="font-semibold">{checkin.mood_score}</span>
+                          </p>
+                          <p className="text-gray-800 text-lg mb-1">
+                            <strong>Energy:</strong> <span className="font-semibold capitalize">{checkin.energy_level}</span>
+                          </p>
                           {checkin.free_text && (
-                            <div className="text-gray-700">
-                              <strong>Notes:</strong> {checkin.free_text}
-                            </div>
+                            <p className="text-gray-800 text-lg mb-1">
+                              <strong>Notes:</strong> <span className="italic">{checkin.free_text}</span>
+                            </p>
                           )}
-                          <p className="text-gray-600 text-sm">Created at: {new Date(checkin.created_at).toLocaleString()}</p>
+                          <p className="text-gray-600 text-sm mt-2">Checked in: {new Date(checkin.created_at).toLocaleString()}</p>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-gray-600 px-6">No check-ins found. Perform a check-in to see your history.</p>
+                    <p className="text-gray-600 text-center py-10">No check-ins found. Perform a check-in to see your history.</p>
                   )}
                 </div>
               )}
 
               {activeTab === 'baseline_traits' && (
-                <div className="flex flex-col gap-4 pt-2 px-6 box-border w-full">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Baseline Traits History</h3>
+                <div className="flex flex-col gap-5"> {/* Increased gap */}
                   {baselineTraits.length > 0 ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-4"> {/* Increased space-y */}
                       {baselineTraits.map((trait) => (
-                        <li key={trait.id} className="bg-gray-50 p-3 rounded-md shadow-sm">
-                          <div className="text-gray-700">
-                            <strong>Traits:</strong>
-                            <ul className="list-disc list-inside ml-4">
-                              {Object.entries(trait.traits_result).map(([key, value]) => (
-                                <li key={key}>{key}: {String(value)}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <p className="text-gray-600 text-sm">Created at: {new Date(trait.created_at).toLocaleString()}</p>
+                        <li key={trait.id} className="bg-green-50 p-5 rounded-lg shadow-md border border-green-200"> {/* Enhanced styling */}
+                          <p className="text-gray-800 text-lg mb-1"><strong>Traits:</strong></p>
+                          <ul className="list-disc list-inside ml-6 text-gray-700 text-base"> {/* Adjusted styling */}
+                            {Object.entries(trait.traits_result).map(([key, value]) => (
+                              <li key={key} className="mb-1">{key}: <span className="font-medium">{String(value)}</span></li>
+                            ))}
+                          </ul>
+                          <p className="text-gray-600 text-sm mt-2">Created at: {new Date(trait.created_at).toLocaleString()}</p>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-gray-600 px-6">No baseline traits found. Complete onboarding to see your history.</p>
+                    <p className="text-gray-600 text-center py-10">No baseline traits found. Complete onboarding to see your history.</p>
                   )}
                 </div>
               )}
