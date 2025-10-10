@@ -8,60 +8,16 @@ import CheckinModal from '@/components/CheckinModal'
 export default function HomePage() {
   const router = useRouter()
   const supabase = createClient()
-  const [baselineTraits, setBaselineTraits] = useState<any[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [todayMessage, setTodayMessage] = useState('')
-
-  useEffect(() => {
-    const fetchBaselineTraits = async () => {
-      const { data, error } = await supabase
-        .from('baseline_traits')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Error fetching baseline traits:', error)
-      } else {
-        setBaselineTraits(data || [])
-      }
-    }
-
-    fetchBaselineTraits()
-  }, [supabase])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.refresh()
   }
 
-  const handleCheckinSubmit = async (emotion: number, energy: string, notes: string) => {
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (user) {
-      const { error } = await supabase.from('baseline_traits').insert({
-        user_id: user.id,
-        traits_result: { emotion, energy, notes },
-      })
-
-      if (error) {
-        console.error('Error inserting check-in data:', error)
-        setTodayMessage('Error saving your check-in. Please try again.')
-      } else {
-        setTodayMessage(`You checked in with emotion: ${emotion}, energy: ${energy}, and notes: "${notes}".`)
-        // Refresh baseline traits to show new entry
-        const { data, error: fetchError } = await supabase
-          .from('baseline_traits')
-          .select('*')
-          .order('created_at', { ascending: false })
-        if (fetchError) {
-          console.error('Error refetching baseline traits:', fetchError)
-        } else {
-          setBaselineTraits(data || [])
-        }
-      }
-    } else {
-      setTodayMessage('You need to be logged in to check-in.')
-    }
+  const handleCheckinSubmit = (emotion: number, energy: string, notes: string) => {
+    setTodayMessage(`You checked in with emotion: ${emotion}, energy: ${energy}, and notes: "${notes}".`)
   }
 
   return (
@@ -114,32 +70,7 @@ export default function HomePage() {
             </div>
           )}
 
-          <section className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
-            <div className="max-h-[500px] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 sticky top-0 bg-white pt-0 pb-2 z-10">Baseline Traits History</h3>
-              <div className="flex flex-col gap-4 pt-2 px-6 box-border w-full">
-                {baselineTraits.length > 0 ? (
-                  <ul className="space-y-2">
-                    {baselineTraits.map((trait) => (
-                      <li key={trait.id} className="bg-gray-50 p-3 rounded-md shadow-sm">
-                        <div className="text-gray-700">
-                          <strong>Traits:</strong>
-                          <ul className="list-disc list-inside ml-4">
-                            {Object.entries(trait.traits_result).map(([key, value]) => (
-                              <li key={key}>{key}: {String(value)}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <p className="text-gray-600 text-sm">Created at: {new Date(trait.created_at).toLocaleString()}</p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-600 px-6">No baseline traits found. Perform a check-in to see your history.</p>
-                )}
-              </div>
-            </div>
-          </section>
+          {/* Removed history section from home page */}
         </main>
 
         {/* Footer */}

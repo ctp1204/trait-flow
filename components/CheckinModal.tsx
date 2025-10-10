@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 interface CheckinModalProps {
   isOpen: boolean;
@@ -12,10 +13,34 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
   const [emotion, setEmotion] = useState(3) // Default emotion to 3
   const [energy, setEnergy] = useState('medium') // Default energy to medium
   const [notes, setNotes] = useState('')
+  const supabase = createClient()
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      console.error('User not authenticated.')
+      return
+    }
+
+    const { error } = await supabase
+      .from('checkins')
+      .insert([
+        {
+          user_id: user.id,
+          mood_score: emotion,
+          energy_level: energy,
+          free_text: notes,
+        },
+      ])
+
+    if (error) {
+      console.error('Error inserting checkin:', error)
+      return
+    }
+
     onSubmit(emotion, energy, notes)
     onClose() // Close modal after submission
     // Reset form fields
