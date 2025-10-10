@@ -16,7 +16,7 @@ export default function LoginPage() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          router.push('/onboarding');
+          router.push('/');
         } else if (event === 'SIGNED_OUT') {
           // Handle signed out state if necessary
         }
@@ -39,7 +39,7 @@ export default function LoginPage() {
           setMessage('Email confirmed! You are now signed in.');
           // Delay redirection slightly so the user can see the message
           setTimeout(() => {
-            router.push('/onboarding');
+            router.push('/');
           }, 2000); // Redirect after 2 seconds
         }
       });
@@ -86,7 +86,7 @@ export default function LoginPage() {
       setMessage(error.message)
     } else {
       setMessage('Sign in successful!')
-      router.push('/onboarding')
+      router.push('/')
     }
   }
 
