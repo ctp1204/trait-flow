@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -92,9 +93,11 @@ export default function OnboardingPage() {
   const [answers, setAnswers] = useState<number[]>(new Array(tipiQuestions.length).fill(-1));
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+  const supabase = createClient();
+  const [message, setMessage] = useState('');
 
-  const handleStart = () => {
-    setStep(2);
+   const handleStart = () => {
+     setStep(2);
   };
 
   const handleAnswerChange = (questionIndex: number, value: number) => {
@@ -107,11 +110,39 @@ export default function OnboardingPage() {
     setCurrentPage(2);
   };
 
-  const handleSubmit = () => {
-    setStep(3);
+  const handleSubmit = async () => {
+    const results = calculateResults();
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage('User not logged in. Please sign in to save your results.');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('baseline_traits')
+        .insert({
+          user_id: user.id,
+          traits_result: results,
+          administered_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('Error saving traits:', error);
+        setMessage('Failed to save onboarding results.');
+      } else {
+        setMessage('Onboarding results saved successfully!');
+        setStep(3);
+      }
+    } catch (error) {
+      console.error('Error saving traits:', error);
+      setMessage('An unexpected error occurred while saving results.');
+    }
   };
 
-  const calculateResults = () => {
+   const calculateResults = () => {
     const scores: Record<Trait, number> = {
       Extraversion: 0,
       Agreeableness: 0,
@@ -209,6 +240,7 @@ export default function OnboardingPage() {
               <Radar data={chartData} />
             </div>
             <p className="text-lg mb-6">This is a preliminary score. You can receive deeper feedback through daily check-ins.</p>
+            {message && <p className="mb-4">{message}</p>}
             <button onClick={() => router.push('/')} className="auth-button btn-primary">Go to Home Screen</button>
           </div>
         );
@@ -217,11 +249,11 @@ export default function OnboardingPage() {
     }
   };
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-        {renderStep()}
-      </div>
-    </div>
-  );
-}
+   return (
+     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+         {renderStep()}
+       </div>
+     </div>
+   );
+ }

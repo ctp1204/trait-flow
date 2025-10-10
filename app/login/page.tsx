@@ -1,15 +1,54 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          router.push('/onboarding');
+        } else if (event === 'SIGNED_OUT') {
+          // Handle signed out state if necessary
+        }
+      }
+    );
+
+    const accessToken = searchParams.get('access_token');
+    const refreshToken = searchParams.get('refresh_token');
+
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      }).then(({ error }) => {
+        if (error) {
+          setMessage('Error signing in after email confirmation: ' + error.message);
+          // Clear URL parameters to prevent re-processing
+          router.replace('/login', undefined);
+        } else {
+          setMessage('Email confirmed! You are now signed in.');
+          // Delay redirection slightly so the user can see the message
+          setTimeout(() => {
+            router.push('/onboarding');
+          }, 2000); // Redirect after 2 seconds
+        }
+      });
+    }
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [router, searchParams, supabase]);
 
   const handleSignUp = async () => {
     const { data, error } = await supabase.auth.signUp({
@@ -25,6 +64,14 @@ export default function LoginPage() {
       setMessage('This email is already registered.')
     }
     else if (data.user) {
+      const { error: insertError } = await supabase
+        .from('users')
+        .insert({ id: data.user.id, email: data.user.email });
+
+      if (insertError) {
+        setMessage('Sign up successful');
+        return;
+      }
       setMessage('Sign up successful! Please check your email to verify.')
       router.refresh()
     }
