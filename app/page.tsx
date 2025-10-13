@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import CheckinModal from '@/components/CheckinModal'
+import Link from 'next/link'
 
 export default function HomePage() {
   const router = useRouter()
@@ -28,9 +29,9 @@ export default function HomePage() {
           <h1 className="text-2xl font-bold text-gray-800">TraitFlow</h1>
           <nav className="flex items-center space-x-4">
             <ul className="flex space-x-4">
-              <li><a href="/" className="text-blue-600 hover:text-blue-800">Home</a></li>
-              <li><a href="/history" className="text-blue-600 hover:text-blue-800">History</a></li>
-              <li><a href="/settings" className="text-blue-600 hover:text-blue-800">Settings</a></li>
+              <li><Link href="/" className="text-blue-600 hover:text-blue-800">Home</Link></li>
+              <li><Link href="/history" className="text-blue-600 hover:text-blue-800">History</Link></li>
+              <li><Link href="/settings" className="text-blue-600 hover:text-blue-800">Settings</Link></li>
             </ul>
             <button
               onClick={handleSignOut}
@@ -65,7 +66,7 @@ export default function HomePage() {
 
           {todayMessage && (
             <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-8 w-full max-w-2xl" role="alert">
-              <p className="font-bold">Today's Message</p>
+              <p className="font-bold">Today&#39s Message</p>
               <p>{todayMessage}</p>
             </div>
           )}

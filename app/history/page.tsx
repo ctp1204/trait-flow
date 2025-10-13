@@ -1,17 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+
+
+
+interface Checkin {
+  id: string;
+  user_id: string;
+  mood_score: number;
+  energy_level: string;
+  free_text: string;
+  created_at: string;
+}
+
+interface BaselineTrait {
+  id: string;
+  user_id: string;
+  traits_result: { [key: string]: string | number };
+  created_at: string;
+}
 
 export default function HistoryPage() {
   const router = useRouter()
   const supabase = createClient()
-  const [checkins, setCheckins] = useState<any[]>([])
-  const [baselineTraits, setBaselineTraits] = useState<any[]>([])
+  const [checkins, setCheckins] = useState<Checkin[]>([])
+  const [baselineTraits, setBaselineTraits] = useState<BaselineTrait[]>([])
   const [activeTab, setActiveTab] = useState<'checkins' | 'baseline_traits'>('checkins')
 
-  const fetchCheckins = async () => {
+  const fetchCheckins = useCallback(async () => {
     const { data, error } = await supabase
       .from('checkins')
       .select('*')
@@ -22,9 +41,9 @@ export default function HistoryPage() {
     } else {
       setCheckins(data || [])
     }
-  }
+  }, [supabase])
 
-  const fetchBaselineTraits = async () => {
+  const fetchBaselineTraits = useCallback(async () => {
     const { data, error } = await supabase
       .from('baseline_traits')
       .select('*')
@@ -35,12 +54,12 @@ export default function HistoryPage() {
     } else {
       setBaselineTraits(data || [])
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchCheckins()
     fetchBaselineTraits()
-  }, [supabase])
+  }, [fetchCheckins, fetchBaselineTraits])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -55,9 +74,9 @@ export default function HistoryPage() {
           <h1 className="text-2xl font-bold text-gray-800">TraitFlow</h1>
           <nav className="flex items-center space-x-4">
             <ul className="flex space-x-4">
-              <li><a href="/" className="text-blue-600 hover:text-blue-800">Home</a></li>
-              <li><a href="/history" className="text-blue-600 hover:text-blue-800">History</a></li>
-              <li><a href="/settings" className="text-blue-600 hover:text-blue-800">Settings</a></li>
+              <li><Link href="/" className="text-blue-600 hover:text-blue-800">Home</Link></li>
+              <li><Link href="/history" className="text-blue-600 hover:text-blue-800">History</Link></li>
+              <li><Link href="/settings" className="text-blue-600 hover:text-blue-800">Settings</Link></li>
             </ul>
             <button
               onClick={handleSignOut}
@@ -90,6 +109,7 @@ export default function HistoryPage() {
             <div className="max-h-[500px] overflow-y-auto"> {/* Increased max-h */}
               {activeTab === 'checkins' && (
                 <div className="flex flex-col gap-5"> {/* Increased gap */}
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Check-in History</h3> {/* Larger title */}
                   {checkins.length > 0 ? (
                     <ul className="space-y-4"> {/* Increased space-y */}
                       {checkins.map((checkin) => (
@@ -117,6 +137,7 @@ export default function HistoryPage() {
 
               {activeTab === 'baseline_traits' && (
                 <div className="flex flex-col gap-5"> {/* Increased gap */}
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Baseline Traits History</h3> {/* Larger title */}
                   {baselineTraits.length > 0 ? (
                     <ul className="space-y-4"> {/* Increased space-y */}
                       {baselineTraits.map((trait) => (
