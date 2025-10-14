@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import CheckinModal from '@/components/CheckinModal'
+import InterventionDetailModal from '@/components/InterventionDetailModal'
 import Link from 'next/link'
 
 interface Intervention {
@@ -12,12 +13,16 @@ interface Intervention {
   message_payload: {
     advice: string;
   };
+  fallback: boolean | null;
+  feedback_score: number | null;
 }
 
 export default function HomePage() {
   const router = useRouter()
   const supabase = createClient()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [selectedIntervention, setSelectedIntervention] = useState<Intervention | null>(null)
   const [interventions, setInterventions] = useState<Intervention[]>([])
   const [loadingInterventions, setLoadingInterventions] = useState(true)
 
@@ -25,7 +30,7 @@ export default function HomePage() {
     setLoadingInterventions(true)
     const { data, error } = await supabase
       .from('interventions')
-      .select('id, created_at, message_payload')
+      .select('id, created_at, message_payload, fallback, feedback_score')
       .order('created_at', { ascending: false })
       .limit(5) // Display last 5 interventions
 
@@ -39,6 +44,18 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchInterventions()
+
+    const channel = supabase
+      .channel('interventions_realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'interventions' }, payload => {
+        // Assuming payload.new contains the full intervention object
+        setInterventions(prev => [payload.new as Intervention, ...prev].slice(0, 5));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [])
 
   const handleSignOut = async () => {
@@ -47,9 +64,41 @@ export default function HomePage() {
   }
 
   const handleCheckinSubmit = (emotion: number, energy: string, notes: string) => {
-    // Refresh interventions after a successful check-in
-    fetchInterventions()
+    // The real-time subscription should handle updating the list
+    // No need to explicitly call fetchInterventions here
   }
+
+  const handleInterventionClick = (intervention: Intervention) => {
+    setSelectedIntervention(intervention)
+    setIsDetailModalOpen(true)
+  }
+
+  const handleDetailModalClose = () => {
+    setIsDetailModalOpen(false)
+    setSelectedIntervention(null)
+  }
+
+  const handleInterventionUpdate = () => {
+    fetchInterventions() // Re-fetch interventions after feedback is submitted
+  }
+
+  const renderStars = (score: number | null) => {
+    if (score === null) return null;
+    return (
+      <div className="flex items-center">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`w-4 h-4 ${i < score ? 'text-yellow-400' : 'text-gray-300'}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -81,7 +130,7 @@ export default function HomePage() {
 
           <div className="flex space-x-4 mb-8">
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsCheckinModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
             >
               Check-in Now
@@ -102,11 +151,18 @@ export default function HomePage() {
             ) : interventions.length > 0 ? (
               <div className="space-y-4">
                 {interventions.map((intervention) => (
-                  <div key={intervention.id} className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                  <div
+                    key={intervention.id}
+                    className="bg-white p-4 rounded-lg shadow-md border border-gray-200 cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleInterventionClick(intervention)}
+                  >
                     <p className="text-gray-800 mb-2">{intervention.message_payload.advice}</p>
-                    <p className="text-sm text-gray-500">
-                      {new Date(intervention.created_at).toLocaleString()}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-gray-500">
+                        {new Date(intervention.created_at).toLocaleString()}
+                      </p>
+                      {renderStars(intervention.feedback_score)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -122,9 +178,15 @@ export default function HomePage() {
         </footer>
       </div>
       <CheckinModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCheckinModalOpen}
+        onClose={() => setIsCheckinModalOpen(false)}
         onSubmit={handleCheckinSubmit}
+      />
+      <InterventionDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={handleDetailModalClose}
+        intervention={selectedIntervention}
+        onUpdate={handleInterventionUpdate}
       />
     </>
   )

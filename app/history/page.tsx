@@ -113,19 +113,23 @@ export default function HistoryPage() {
                   {checkins.length > 0 ? (
                     <ul className="space-y-4"> {/* Increased space-y */}
                       {checkins.map((checkin) => (
-                        <li key={checkin.id} className="bg-blue-50 p-5 rounded-lg shadow-md border border-blue-200"> {/* Enhanced styling */}
-                          <p className="text-gray-800 text-lg mb-1">
-                            <strong>Emotion:</strong> <span className="font-semibold">{checkin.mood_score}</span>
-                          </p>
-                          <p className="text-gray-800 text-lg mb-1">
-                            <strong>Energy:</strong> <span className="font-semibold capitalize">{checkin.energy_level}</span>
-                          </p>
+                        <li key={checkin.id} className="bg-white p-4 rounded-lg shadow-sm flex flex-col space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              {checkin.mood_score >= 4 ? '😊 ' : checkin.mood_score >= 2 ? '😐 ' : '😞 '}
+                              <p className="text-gray-800 text-base font-semibold">
+                                • Mood: {checkin.mood_score}/5 • Energy: {checkin.energy_level}
+                              </p>
+                            </div>
+                            <p className="text-gray-500 text-sm">
+                              {new Date(checkin.created_at).toLocaleDateString() === new Date().toLocaleDateString() ? 'Today' : new Date(checkin.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
                           {checkin.free_text && (
-                            <p className="text-gray-800 text-lg mb-1">
-                              <strong>Notes:</strong> <span className="italic">{checkin.free_text}</span>
+                            <p className="text-gray-700 text-sm italic">
+                              "{checkin.free_text}"
                             </p>
                           )}
-                          <p className="text-gray-600 text-sm mt-2">Checked in: {new Date(checkin.created_at).toLocaleString()}</p>
                         </li>
                       ))}
                     </ul>
