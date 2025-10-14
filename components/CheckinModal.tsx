@@ -11,7 +11,7 @@ interface CheckinModalProps {
 
 export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModalProps) {
   const [emotion, setEmotion] = useState(3) // Default emotion to 3
-  const [energy, setEnergy] = useState('medium') // Default energy to medium
+  const [energy, setEnergy] = useState('Medium') // Default energy to medium
   const [notes, setNotes] = useState('')
   const supabase = createClient()
 
@@ -31,7 +31,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
         {
           user_id: user.id,
           mood_score: emotion,
-          energy_level: energy,
+          energy_level: energy.toLowerCase(),
           free_text: notes,
         },
       ])
@@ -45,18 +45,40 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
     onClose() // Close modal after submission
     // Reset form fields
     setEmotion(3)
-    setEnergy('medium')
+    setEnergy('Medium')
     setNotes('')
+  }
+  const moodLabels: { [key: number]: string } = {
+    1: 'Bad',
+    2: 'Low',
+    3: 'Neutral',
+    4: 'Good',
+    5: 'Great'
+  }
+
+  const moodEmojis: { [key: number]: string } = {
+    1: '😞',
+    2: '😟',
+    3: '😐',
+    4: '😄',
+    5: '😁'
   }
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">How are you feeling today?</h2>
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-800">Daily Check-in</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-        <div className="mb-4">
+        <div className="mb-6">
           <label htmlFor="emotion" className="block text-gray-700 text-sm font-bold mb-2">
-            Emotion (1-5):
+            How is your mood today?
           </label>
           <input
             type="range"
@@ -65,82 +87,69 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
             max="5"
             value={emotion}
             onChange={(e) => setEmotion(parseInt(e.target.value))}
-            className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer range-lg"
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-xs px-2 mt-1 text-gray-600">
-            <span>1 (Bad)</span>
+          <div className="flex justify-between text-xs px-1 mt-1 text-gray-600">
+            <span>1</span>
             <span>2</span>
-            <span>3 (Neutral)</span>
+            <span>3</span>
             <span>4</span>
-            <span>5 (Great)</span>
+            <span>5</span>
+          </div>
+          <div className="text-center mt-4 bg-gray-100 rounded-lg py-2">
+            <span className="text-2xl">{moodEmojis[emotion]}</span>
+            <span className="ml-2 text-gray-800">{moodLabels[emotion]} ({emotion}/5)</span>
           </div>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Energy Level:
+            What's your energy level?
           </label>
           <div className="flex justify-around">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                className="form-radio text-blue-600"
-                name="energy"
-                value="low"
-                checked={energy === 'low'}
-                onChange={() => setEnergy('low')}
-              />
-              <span className="ml-2 text-gray-700">Low</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                className="form-radio text-blue-600"
-                name="energy"
-                value="medium"
-                checked={energy === 'medium'}
-                onChange={() => setEnergy('medium')}
-              />
-              <span className="ml-2 text-gray-700">Medium</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                className="form-radio text-blue-600"
-                name="energy"
-                value="high"
-                checked={energy === 'high'}
-                onChange={() => setEnergy('high')}
-              />
-              <span className="ml-2 text-gray-700">High</span>
-            </label>
+            {['Low', 'Medium', 'High'].map((level) => (
+              <button
+                key={level}
+                onClick={() => setEnergy(level)}
+                className={`flex flex-col items-center justify-center w-32 h-24 rounded-lg border ${
+                  energy === level
+                    ? 'bg-yellow-100 border-yellow-400'
+                    : 'bg-white border-gray-300'
+                }`}
+              >
+                <span
+                  className={`block w-4 h-4 rounded-full mb-2 ${
+                    energy === level ? 'bg-yellow-500' : 'bg-gray-300'
+                  }`}
+                ></span>
+                <span>{level}</span>
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="mb-6">
           <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">
-            Notes (optional):
+            Anything else on your mind? (Optional)
           </label>
           <textarea
             id="notes"
-            rows={3}
+            rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Any thoughts or observations?"
+            className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Share what's on your mind today..."
+            maxLength={280}
           ></textarea>
+          <div className="text-right text-sm text-gray-500 mt-1">
+            Optional - helps personalize your coaching {notes.length}/280
+          </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-          >
-            Cancel
-          </button>
+        <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out w-full"
           >
             Submit Check-in
           </button>
