@@ -1,11 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import CheckinModal from '@/components/CheckinModal'
 import InterventionDetailModal from '@/components/InterventionDetailModal'
 import Link from 'next/link'
+
+interface Checkin {
+  id: string;
+  user_id: string;
+  mood_score: number;
+  energy_level: string;
+  free_text: string;
+  created_at: string;
+}
 
 interface Intervention {
   id: string;
@@ -25,8 +34,10 @@ export default function HomePage() {
   const [selectedIntervention, setSelectedIntervention] = useState<Intervention | null>(null)
   const [interventions, setInterventions] = useState<Intervention[]>([])
   const [loadingInterventions, setLoadingInterventions] = useState(true)
+  const [checkins, setCheckins] = useState<Checkin[]>([])
+  const [loadingCheckins, setLoadingCheckins] = useState(true)
 
-  const fetchInterventions = async () => {
+  const fetchInterventions = useCallback(async () => {
     setLoadingInterventions(true)
     const { data, error } = await supabase
       .from('interventions')
@@ -40,10 +51,27 @@ export default function HomePage() {
       setInterventions(data || [])
     }
     setLoadingInterventions(false)
-  }
+  }, [supabase])
+
+  const fetchCheckins = useCallback(async () => {
+    setLoadingCheckins(true)
+    const { data, error } = await supabase
+      .from('checkins')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5) // Display last 5 check-ins
+
+    if (error) {
+      console.error('Error fetching checkins:', error)
+    } else {
+      setCheckins(data || [])
+    }
+    setLoadingCheckins(false)
+  }, [supabase])
 
   useEffect(() => {
     fetchInterventions()
+    fetchCheckins()
 
     const channel = supabase
       .channel('interventions_realtime')
@@ -56,7 +84,7 @@ export default function HomePage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [])
+  }, [supabase, fetchInterventions, fetchCheckins])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -104,7 +132,7 @@ export default function HomePage() {
     <>
       <div className="flex flex-col min-h-screen bg-gray-100">
         {/* Header */}
-        <header className="bg-white shadow-md p-4 flex justify-between items-center">
+        <header className="bg-white shadow-md p-4 flex justify-between items-center fixed top-0 left-0 w-full z-10">
           <h1 className="text-2xl font-bold text-gray-800">TraitFlow</h1>
           <nav className="flex items-center space-x-4">
             <ul className="flex space-x-4">
@@ -122,7 +150,7 @@ export default function HomePage() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-grow flex flex-col items-center justify-start p-8">
+        <main className="flex-grow flex flex-col items-center justify-start p-8 pt-20 mt-16">
           <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Welcome Home!</h2>
           <p className="text-lg text-gray-700 mb-8 max-w-md text-center">
             This is your personalized dashboard. Get ready to explore and manage your activities.
@@ -143,33 +171,71 @@ export default function HomePage() {
             </button>
           </div>
 
-          {/* Interventions List */}
-          <section className="w-full max-w-2xl mt-8">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Recent Interventions</h3>
-            {loadingInterventions ? (
-              <p className="text-gray-600">Loading interventions...</p>
-            ) : interventions.length > 0 ? (
-              <div className="space-y-4">
-                {interventions.map((intervention) => (
-                  <div
-                    key={intervention.id}
-                    className="bg-white p-4 rounded-lg shadow-md border border-gray-200 cursor-pointer hover:bg-gray-50"
-                    onClick={() => handleInterventionClick(intervention)}
-                  >
-                    <p className="text-gray-800 mb-2">{intervention.message_payload.advice}</p>
-                    <div className="flex justify-between items-center">
-                      <p className="text-sm text-gray-500">
-                        {new Date(intervention.created_at).toLocaleString()}
-                      </p>
-                      {renderStars(intervention.feedback_score)}
+          <div className="flex flex-col md:flex-row gap-8 w-full max-w-7xl mt-8">
+            {/* Recent Check-ins */}
+            <section className="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Recent Check-ins</h3>
+              {loadingCheckins ? (
+                <p className="text-gray-600">Loading check-ins...</p>
+              ) : checkins.length > 0 ? (
+                <div className="space-y-4">
+                  {checkins.map((checkin) => (
+                    <div key={checkin.id} className="bg-white p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl">
+                            {checkin.mood_score >= 4 ? '😊' : checkin.mood_score >= 2 ? '😐' : '😞'}
+                          </span>
+                          <span className="text-2xl">
+                            {checkin.energy_level === 'high' ? '⚡' : checkin.energy_level === 'medium' ? '🔋' : '🪫'}
+                          </span>
+                          <p className="text-gray-800 text-lg font-semibold">
+                            Mood: {checkin.mood_score}/5 • Energy: {checkin.energy_level}
+                          </p>
+                        </div>
+                        <p className="text-gray-500 text-sm">
+                          {new Date(checkin.created_at).toLocaleDateString() === new Date().toLocaleDateString() ? 'Today' : new Date(checkin.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      {checkin.free_text && (
+                        <p className="text-gray-700 text-base italic border-l-4 border-gray-200 pl-3 py-1">
+                          "{checkin.free_text}"
+                        </p>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600">No interventions yet. Check in to get some advice!</p>
-            )}
-          </section>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-600">No check-ins yet. Check in to see your history!</p>
+              )}
+            </section>
+
+            {/* Recent Interventions */}
+            <section className="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Recent Interventions</h3>
+              {loadingInterventions ? (
+                <p className="text-gray-600">Loading interventions...</p>
+              ) : interventions.length > 0 ? (
+                <div className="space-y-4">
+                  {interventions.map((intervention) => (
+                    <div
+                      key={intervention.id}
+                      className="bg-white p-5 rounded-lg shadow-lg cursor-pointer hover:bg-blue-50 hover:shadow-xl transition-all duration-300 ease-in-out"
+                      onClick={() => handleInterventionClick(intervention)}
+                    >
+                      <p className="text-gray-800 text-base mb-3 leading-relaxed">{intervention.message_payload.advice}</p>
+                      <div className="flex justify-between items-center text-sm text-gray-500">
+                        <span>{new Date(intervention.created_at).toLocaleString()}</span>
+                        {renderStars(intervention.feedback_score)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-600">No interventions yet. Check in to get some advice!</p>
+              )}
+            </section>
+          </div>
         </main>
 
         {/* Footer */}
