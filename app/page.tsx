@@ -197,14 +197,6 @@ export default function HomePage() {
             >
               Check-in Now
             </button>
-            {!hasOnboarded && (
-              <button
-                onClick={() => router.push('/onboarding')}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
-              >
-                Start Onboarding
-              </button>
-            )}
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 w-full max-w-7xl mt-8">

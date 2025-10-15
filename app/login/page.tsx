@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
+import { checkOnboardingStatusAndRedirect, createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
@@ -17,7 +17,7 @@ function LoginPageComponent() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          router.push('/onboarding');
+          checkOnboardingStatusAndRedirect(router);
         } else if (event === 'SIGNED_OUT') {
           // Handle signed out state if necessary
         }
@@ -40,7 +40,7 @@ function LoginPageComponent() {
           setMessage('Email confirmed! You are now signed in.');
           // Delay redirection slightly so the user can see the message
           setTimeout(() => {
-            router.push('/onboarding');
+            checkOnboardingStatusAndRedirect(router);
           }, 2000); // Redirect after 2 seconds
         }
       });
@@ -78,7 +78,7 @@ function LoginPageComponent() {
       setMessage(error.message)
     } else {
       setMessage('Sign in successful!')
-      router.push('/onboarding')
+      checkOnboardingStatusAndRedirect(router)
     }
   }
 
