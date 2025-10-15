@@ -91,10 +91,7 @@ export default function HomePage() {
     router.refresh()
   }
 
-  const handleCheckinSubmit = (emotion: number, energy: string, notes: string) => {
-    // The real-time subscription should handle updating the list
-    // No need to explicitly call fetchInterventions here
-  }
+  const handleCheckinSubmit = () => {}
 
   const handleInterventionClick = (intervention: Intervention) => {
     setSelectedIntervention(intervention)
@@ -199,7 +196,7 @@ export default function HomePage() {
                       </div>
                       {checkin.free_text && (
                         <p className="text-gray-700 text-base italic border-l-4 border-gray-200 pl-3 py-1">
-                          "{checkin.free_text}"
+                          &quot;{checkin.free_text}&quot;
                         </p>
                       )}
                     </div>

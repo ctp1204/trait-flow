@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { truncate } from 'fs';
 
 interface InterventionDetailModalProps {
   isOpen: boolean;
@@ -20,13 +19,11 @@ interface InterventionDetailModalProps {
 }
 
 export default function InterventionDetailModal({ isOpen, onClose, intervention, onUpdate }: InterventionDetailModalProps) {
-  const [fallback, setFallback] = useState<boolean | null>(null)
   const [feedbackScore, setFeedbackScore] = useState<number | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
     if (intervention) {
-      setFallback(intervention.fallback)
       setFeedbackScore(intervention.feedback_score)
     }
   }, [intervention])

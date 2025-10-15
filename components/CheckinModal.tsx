@@ -152,7 +152,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
 
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            What's your energy level?
+            What&apos;s your energy level?
           </label>
           <div className="flex justify-around">
             {['Low', 'mid', 'High'].map((level) => (
