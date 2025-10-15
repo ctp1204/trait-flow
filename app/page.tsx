@@ -29,6 +29,7 @@ interface Intervention {
 export default function HomePage() {
   const router = useRouter()
   const supabase = createClient()
+  const [userEmail, setUserEmail] = useState<string | undefined>('')
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [selectedIntervention, setSelectedIntervention] = useState<Intervention | null>(null)
@@ -36,6 +37,7 @@ export default function HomePage() {
   const [loadingInterventions, setLoadingInterventions] = useState(true)
   const [checkins, setCheckins] = useState<Checkin[]>([])
   const [loadingCheckins, setLoadingCheckins] = useState(true)
+  const [hasOnboarded, setHasOnboarded] = useState(false)
 
   const fetchInterventions = useCallback(async () => {
     setLoadingInterventions(true)
@@ -70,6 +72,22 @@ export default function HomePage() {
   }, [supabase])
 
   useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email);
+        const { data } = await supabase
+          .from('baseline_traits')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        if (data) {
+          setHasOnboarded(true);
+        }
+      }
+    };
+
+    checkOnboardingStatus()
     fetchInterventions()
     fetchCheckins()
 
@@ -130,20 +148,39 @@ export default function HomePage() {
       <div className="flex flex-col min-h-screen bg-gray-100">
         {/* Header */}
         <header className="bg-white shadow-md p-4 flex justify-between items-center fixed top-0 left-0 w-full z-10">
-          <h1 className="text-2xl font-bold text-gray-800">TraitFlow</h1>
-          <nav className="flex items-center space-x-4">
-            <ul className="flex space-x-4">
-              <li><Link href="/" className="text-blue-600 hover:text-blue-800">Home</Link></li>
-              <li><Link href="/history" className="text-blue-600 hover:text-blue-800">History</Link></li>
-              <li><Link href="/settings" className="text-blue-600 hover:text-blue-800">Settings</Link></li>
-            </ul>
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2">
+              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 8v8m-4-5v5m-4-2v2"></path></svg>
+              <h1 className="text-2xl font-bold text-gray-800">Trait Flow</h1>
+            </div>
+            <nav className="flex items-center space-x-4">
+              <Link href="/" className="text-gray-600 hover:text-blue-600 flex items-center space-x-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span>Dashboard</span>
+              </Link>
+              <Link href="/history" className="text-gray-600 hover:text-blue-600 flex items-center space-x-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.745A9.863 9.863 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                <span>Messages</span>
+              </Link>
+              <Link href="/settings" className="text-gray-600 hover:text-blue-600 flex items-center space-x-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                <span>Analytics</span>
+              </Link>
+            </nav>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              <span className="text-gray-600">{userEmail}</span>
+            </div>
             <button
               onClick={handleSignOut}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+              className="text-gray-600 hover:text-blue-600 flex items-center space-x-2"
             >
-              Sign Out
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              <span>Sign out</span>
             </button>
-          </nav>
+          </div>
         </header>
 
         {/* Main Content */}
@@ -160,12 +197,14 @@ export default function HomePage() {
             >
               Check-in Now
             </button>
-            {/* <button
-              onClick={() => router.push('/onboarding')}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
-            >
-              Start Onboarding
-            </button> */}
+            {!hasOnboarded && (
+              <button
+                onClick={() => router.push('/onboarding')}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
+              >
+                Start Onboarding
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 w-full max-w-7xl mt-8">
