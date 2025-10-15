@@ -9,6 +9,7 @@ function LoginPageComponent() {
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
   const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -33,10 +34,12 @@ function LoginPageComponent() {
         refresh_token: refreshToken,
       }).then(({ error }) => {
         if (error) {
+          setMessageType('error');
           setMessage('Error signing in after email confirmation: ' + error.message);
           // Clear URL parameters to prevent re-processing
           router.replace('/login', undefined);
         } else {
+          setMessageType('success');
           setMessage('Email confirmed! You are now signed in.');
           // Delay redirection slightly so the user can see the message
           setTimeout(() => {
@@ -60,9 +63,11 @@ function LoginPageComponent() {
     })
 
     if (error) {
+      setMessageType('error');
       setMessage(error.message)
     } else {
       setOtpSent(true)
+      setMessageType('success');
       setMessage('OTP has been sent to your email. Please check your inbox and enter the code.')
     }
   }
@@ -75,64 +80,75 @@ function LoginPageComponent() {
     })
 
     if (error) {
+      setMessageType('error');
       setMessage(error.message)
     } else {
+      setMessageType('success');
       setMessage('Sign in successful!')
       checkOnboardingStatusAndRedirect(router)
     }
   }
 
-  return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1 className="auth-title">Welcome</h1>
-        {message && <p className="auth-message">{message}</p>}
-        <form>
-          {!otpSent ? (
-            <>
-              <input
-                className="auth-input"
-                id="email"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <div className="space-y-4">
-                <button
-                  className="auth-button btn-primary"
-                  type="button"
-                  onClick={handleLoginWithOtp}
-                >
-                  Send OTP
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <input
-                className="auth-input"
-                id="otp"
-                type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
-              <div className="space-y-4">
-                <button
-                  className="auth-button btn-primary"
-                  type="button"
-                  onClick={handleVerifyOtp}
-                >
-                  Verify OTP
-                </button>
-              </div>
-            </>
-          )}
-        </form>
-      </div>
-    </div>
-  )
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (otpSent) {
+      handleVerifyOtp()
+    } else {
+      handleLoginWithOtp()
+    }
+  }
+
+   return (
+     <div className="auth-container">
+       <div className="auth-card">
+         <h1 className="auth-title">Welcome</h1>
+         {message && <p className={`auth-message ${
+            messageType === 'success' ? 'text-green-500' : 'text-red-500'
+          }`}>{message}</p>}
+         <form onSubmit={handleFormSubmit}>
+           {!otpSent ? (
+             <>
+               <input
+                 className="auth-input"
+                 id="email"
+                 type="email"
+                 placeholder="Email"
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+               />
+               <div className="space-y-4">
+                 <button
+                   className="auth-button btn-primary"
+                   type="submit"
+                 >
+                   Send OTP
+                 </button>
+               </div>
+             </>
+           ) : (
+             <>
+               <input
+                 className="auth-input"
+                 id="otp"
+                 type="text"
+                 placeholder="Enter OTP"
+                 value={otp}
+                 onChange={(e) => setOtp(e.target.value)}
+               />
+               <div className="space-y-4">
+                 <button
+                   className="auth-button btn-primary"
+                   type="submit"
+                 >
+                   Verify OTP
+                 </button>
+               </div>
+             </>
+           )}
+         </form>
+       </div>
+     </div>
+   )
 }
 
 export default function LoginPage() {
