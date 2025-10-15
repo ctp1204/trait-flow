@@ -6,7 +6,8 @@ import { Suspense, useEffect, useState } from 'react'
 
 function LoginPageComponent() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [otp, setOtp] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
   const [message, setMessage] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -50,38 +51,29 @@ function LoginPageComponent() {
     };
   }, [router, searchParams, supabase]);
 
-  const handleSignUp = async () => {
-    const { data, error } = await supabase.auth.signUp({
+  const handleLoginWithOtp = async () => {
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      password,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: `${location.origin}/`,
       },
     })
+
     if (error) {
       setMessage(error.message)
-    } else if (data.user && data.user.identities && data.user.identities.length === 0) {
-      setMessage('This email is already registered.')
-    }
-    else if (data.user) {
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert({ id: data.user.id, email: data.user.email });
-
-      if (insertError) {
-        setMessage('Sign up successful');
-        return;
-      }
-      setMessage('Sign up successful! Please check your email to verify.')
-      router.refresh()
+    } else {
+      setOtpSent(true)
+      setMessage('OTP has been sent to your email. Please check your inbox and enter the code.')
     }
   }
 
-  const handleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+  const handleVerifyOtp = async () => {
+    const { error } = await supabase.auth.verifyOtp({
       email,
-      password,
+      token: otp,
+      type: 'email',
     })
+
     if (error) {
       setMessage(error.message)
     } else {
@@ -96,38 +88,47 @@ function LoginPageComponent() {
         <h1 className="auth-title">Welcome</h1>
         {message && <p className="auth-message">{message}</p>}
         <form>
-          <input
-            className="auth-input"
-            id="email"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            className="auth-input"
-            id="password"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <div className="space-y-4">
-            <button
-              className="auth-button btn-primary"
-              type="button"
-              onClick={handleSignIn}
-            >
-              Sign In
-            </button>
-            <button
-              className="auth-button btn-secondary"
-              type="button"
-              onClick={handleSignUp}
-            >
-              Sign Up
-            </button>
-          </div>
+          {!otpSent ? (
+            <>
+              <input
+                className="auth-input"
+                id="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <div className="space-y-4">
+                <button
+                  className="auth-button btn-primary"
+                  type="button"
+                  onClick={handleLoginWithOtp}
+                >
+                  Send OTP
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <input
+                className="auth-input"
+                id="otp"
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+              <div className="space-y-4">
+                <button
+                  className="auth-button btn-primary"
+                  type="button"
+                  onClick={handleVerifyOtp}
+                >
+                  Verify OTP
+                </button>
+              </div>
+            </>
+          )}
         </form>
       </div>
     </div>
