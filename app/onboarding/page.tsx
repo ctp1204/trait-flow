@@ -76,38 +76,23 @@ const tipiQuestions = [
   },
 ];
 
-const likertScale = [
-  "Disagree strongly",
-  "Disagree moderately",
-  "Disagree a little",
-  "Neither agree nor disagree",
-  "Agree a little",
-  "Agree moderately",
-  "Agree strongly",
-];
-
 type Trait = 'Extraversion' | 'Agreeableness' | 'Conscientiousness' | 'Emotional Stability' | 'Openness to Experiences';
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState<number[]>(new Array(tipiQuestions.length).fill(-1));
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // 0 for welcome, 1-10 for questions, 11 for results
   const router = useRouter();
   const supabase = createClient();
   const [message, setMessage] = useState('');
 
-   const handleStart = () => {
-     setStep(2);
+  const handleStart = () => {
+    setCurrentPage(1);
   };
 
   const handleAnswerChange = (questionIndex: number, value: number) => {
     const newAnswers = [...answers];
     newAnswers[questionIndex] = value;
     setAnswers(newAnswers);
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(2);
   };
 
   const handleSubmit = async () => {
@@ -134,7 +119,7 @@ export default function OnboardingPage() {
         setMessage('Failed to save onboarding results.');
       } else {
         setMessage('Onboarding results saved successfully!');
-        setStep(3);
+        setCurrentPage(tipiQuestions.length + 1); // Go to results page
       }
     } catch (error) {
       console.error('Error saving traits:', error);
@@ -142,7 +127,7 @@ export default function OnboardingPage() {
     }
   };
 
-   const calculateResults = () => {
+  const calculateResults = () => {
     const scores: Record<Trait, number> = {
       Extraversion: 0,
       Agreeableness: 0,
@@ -168,57 +153,87 @@ export default function OnboardingPage() {
     return scores;
   };
 
-  const isPage1Complete = answers.slice(0, 5).every(ans => ans !== -1);
-  const isPage2Complete = answers.slice(5, 10).every(ans => ans !== -1);
+  const renderContent = () => {
+    if (currentPage === 0) {
+      return (
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Welcome to TIPI</h1>
+          <p className="text-lg mb-8">This is a short personality test. It includes 10 questions and will take about 3 minutes.</p>
+          <button onClick={handleStart} className="auth-button btn-primary">Start</button>
+        </div>
+      );
+    }
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Welcome to TIPI</h1>
-            <p className="text-lg mb-8">This is a short personality test. It includes 10 questions and will take about 3 minutes.</p>
-            <button onClick={handleStart} className="auth-button btn-primary">Start</button>
+    if (currentPage > 0 && currentPage <= tipiQuestions.length) {
+      const questionIndex = currentPage - 1;
+      const q = tipiQuestions[questionIndex];
+
+      return (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm text-gray-500">{currentPage} / {tipiQuestions.length}</span>
           </div>
-        );
-      case 2:
-        const questionsToShow = currentPage === 1 ? tipiQuestions.slice(0, 5) : tipiQuestions.slice(5, 10);
-        const startIndex = currentPage === 1 ? 0 : 5;
-
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-6 text-center">TIPI Questions (Page {currentPage}/2)</h2>
-            {questionsToShow.map((q, index) => {
-              const questionIndex = startIndex + index;
-              return (
-                <div key={questionIndex} className="mb-8">
-                  <p className="font-semibold mb-3">{q.question}</p>
-                  <div className="flex justify-between">
-                    {likertScale.map((label, value) => (
-                      <div key={value} className="flex flex-col items-center">
-                        <input
-                          type="radio"
-                          name={`question-${questionIndex}`}
-                          value={value + 1}
-                          checked={answers[questionIndex] === value + 1}
-                          onChange={() => handleAnswerChange(questionIndex, value + 1)}
-                          className="mb-1"
-                        />
-                        <label className="text-xs text-center">{label}</label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-            {currentPage === 1 ? (
-              <button onClick={handleNextPage} disabled={!isPage1Complete} className="auth-button btn-primary mt-4 disabled:bg-gray-400">Next</button>
+          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${(currentPage / tipiQuestions.length) * 100}%` }}></div>
+          </div>
+          <div className="text-center mb-8">
+            <p className="text-lg mb-2">I see myself as:</p>
+            <p className="text-2xl font-bold">&quot;{q.question}&quot;</p>
+          </div>
+          <div className="mb-8">
+            <div className="flex justify-between text-xs px-1 mb-1 text-gray-600">
+              <span>Disagree strongly</span>
+              <span>Agree strongly</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="7"
+              value={answers[questionIndex] === -1 ? 4 : answers[questionIndex]}
+              onChange={(e) => handleAnswerChange(questionIndex, parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs px-1 mt-1 text-gray-600">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+              <span>6</span>
+              <span>7</span>
+            </div>
+          </div>
+          <div className="flex justify-between mt-8">
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              ← Back
+            </button>
+            {currentPage === tipiQuestions.length ? (
+              <button
+                onClick={handleSubmit}
+                disabled={answers[questionIndex] === -1}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed"
+              >
+                Finish
+              </button>
             ) : (
-              <button onClick={handleSubmit} disabled={!isPage2Complete} className="auth-button btn-primary mt-4 disabled:bg-gray-400">Finish</button>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={answers[questionIndex] === -1}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out disabled:bg-blue-300 disabled:cursor-not-allowed"
+              >
+                Next →
+              </button>
             )}
           </div>
-        );
-      case 3:
+        </div>
+      );
+    }
+
+    if (currentPage > tipiQuestions.length) {
         const results = calculateResults();
         const chartData = {
           labels: Object.keys(results),
@@ -244,15 +259,15 @@ export default function OnboardingPage() {
             <button onClick={() => router.push('/')} className="auth-button btn-primary">Go to Home Screen</button>
           </div>
         );
-      default:
-        return null;
     }
+
+    return null;
   };
 
    return (
      <div className="flex items-center justify-center min-h-screen bg-gray-100">
        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-         {renderStep()}
+         {renderContent()}
        </div>
      </div>
    );
