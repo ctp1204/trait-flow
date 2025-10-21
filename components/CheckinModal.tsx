@@ -113,94 +113,173 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Daily Check-in</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-6">
-          <label htmlFor="emotion" className="block text-gray-700 text-sm font-bold mb-2">
-            How is your mood today?
-          </label>
-          <input
-            type="range"
-            id="emotion"
-            min="1"
-            max="5"
-            value={emotion}
-            onChange={(e) => setEmotion(parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <div className="flex justify-between text-xs px-1 mt-1 text-gray-600">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-          </div>
-          <div className="text-center mt-4 bg-gray-100 rounded-lg py-2">
-            <span className="text-2xl">{moodEmojis[emotion]}</span>
-            <span className="ml-2 text-gray-800">{moodLabels[emotion]} ({emotion}/5)</span>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md border border-white/20 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-white/20 rounded-lg">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-white">Daily Check-in</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
+            >
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            What&apos;s your energy level?
-          </label>
-          <div className="flex justify-around">
-            {['Low', 'mid', 'High'].map((level) => (
-              <button
-                key={level}
-                onClick={() => setEnergy(level)}
-                className={`flex flex-col items-center justify-center w-32 h-24 rounded-lg border ${
-                  energy === level
-                    ? 'bg-yellow-100 border-yellow-400'
-                    : 'bg-white border-gray-300'
-                }`}
-              >
-                <span
-                  className={`block w-4 h-4 rounded-full mb-2 ${
-                    energy === level ? 'bg-yellow-500' : 'bg-gray-300'
-                  }`}
-                ></span>
-                <span>{level === 'mid' ? 'Medium' : level}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <div className="p-4 space-y-5">
 
-        <div className="mb-6">
-          <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">
-            Anything else on your mind? (Optional)
-          </label>
-          <textarea
-            id="notes"
-            rows={4}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Share what's on your mind today..."
-            maxLength={280}
-          ></textarea>
-          <div className="text-right text-sm text-gray-500 mt-1">
-            Optional - helps personalize your coaching {notes.length}/280
-          </div>
-        </div>
+          {/* Mood Section */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-blue-100 rounded-md">
+                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <label htmlFor="emotion" className="text-base font-semibold text-gray-800">
+                How is your mood today?
+              </label>
+            </div>
 
-        <div className="flex justify-end">
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out w-full"
-          >
-            Submit Check-in
-          </button>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+              <input
+                type="range"
+                id="emotion"
+                min="1"
+                max="5"
+                value={emotion}
+                onChange={(e) => setEmotion(parseInt(e.target.value))}
+                className="w-full h-2 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-full appearance-none cursor-pointer slider"
+                style={{
+                  background: `linear-gradient(to right, #fca5a5 0%, #fde047 50%, #86efac 100%)`
+                }}
+              />
+              <div className="flex justify-between text-xs px-1 mt-1 text-gray-600">
+                <span className="font-medium">Very Low</span>
+                <span className="font-medium">Neutral</span>
+                <span className="font-medium">Very High</span>
+              </div>
+
+              <div className="text-center mt-3 bg-white/60 rounded-lg py-2 border border-white/40">
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-2xl">{moodEmojis[emotion]}</span>
+                  <div>
+                    <div className="text-base font-bold text-gray-800">{moodLabels[emotion]}</div>
+                    <div className="text-xs text-gray-600">Score: {emotion}/5</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Energy Section */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-yellow-100 rounded-md">
+                <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <label className="text-base font-semibold text-gray-800">
+                What's your energy level?
+              </label>
+            </div>
+
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-3 rounded-xl border border-yellow-100">
+              <div className="grid grid-cols-3 gap-2">
+                {['Low', 'mid', 'High'].map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => setEnergy(level)}
+                    className={`group flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all duration-300 ${
+                      energy === level
+                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 border-yellow-500 shadow-md scale-105'
+                        : 'bg-white/60 border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
+                    }`}
+                  >
+                    <div
+                      className={`w-4 h-4 rounded-full mb-1.5 transition-all duration-300 ${
+                        energy === level
+                          ? 'bg-white shadow-sm'
+                          : level === 'Low'
+                            ? 'bg-red-400'
+                            : level === 'mid'
+                              ? 'bg-yellow-400'
+                              : 'bg-green-400'
+                      }`}
+                    ></div>
+                    <span className={`text-sm font-medium ${
+                      energy === level ? 'text-white' : 'text-gray-700'
+                    }`}>
+                      {level === 'mid' ? 'Medium' : level}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Notes Section */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1.5 bg-green-100 rounded-md">
+                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </div>
+              <label htmlFor="notes" className="text-base font-semibold text-gray-800">
+                Anything else on your mind? (Optional)
+              </label>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-xl border border-green-100">
+              <textarea
+                id="notes"
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full p-3 bg-white/60 border border-green-200 rounded-lg text-gray-700 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none text-sm"
+                placeholder="Share what's on your mind today..."
+                maxLength={280}
+              ></textarea>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-xs text-gray-500">
+                  Optional - helps personalize your coaching
+                </span>
+                <span className={`text-xs font-medium ${
+                  notes.length > 250 ? 'text-red-500' : 'text-gray-500'
+                }`}>
+                  {notes.length}/280
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-2">
+            <button
+              onClick={handleSubmit}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                <span className="text-base">Submit Check-in</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
