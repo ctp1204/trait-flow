@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import CheckinModal from '@/components/CheckinModal'
 import InterventionDetailModal from '@/components/InterventionDetailModal'
+import PersonalityTraitsModal from '@/components/PersonalityTraitsModal'
 import Link from 'next/link'
 
 interface Checkin {
@@ -40,7 +41,9 @@ export default function HomePage() {
   const [userEmail, setUserEmail] = useState<string | undefined>('')
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [isTraitsModalOpen, setIsTraitsModalOpen] = useState(false)
   const [selectedIntervention, setSelectedIntervention] = useState<Intervention | null>(null)
+  const [selectedTrait, setSelectedTrait] = useState<BaselineTrait | null>(null)
   const [timelineItems, setTimelineItems] = useState<Checkin[]>([])
   const [baselineTraits, setBaselineTraits] = useState<BaselineTrait[]>([])
   const [loading, setLoading] = useState(true)
@@ -165,6 +168,16 @@ export default function HomePage() {
     fetchTimelineData()
   }
 
+  const handleTraitClick = (trait: BaselineTrait) => {
+    setSelectedTrait(trait)
+    setIsTraitsModalOpen(true)
+  }
+
+  const handleTraitsModalClose = () => {
+    setIsTraitsModalOpen(false)
+    setSelectedTrait(null)
+  }
+
   const renderStars = (score: number | null) => {
     if (score === null) return null;
     return (
@@ -201,7 +214,11 @@ export default function HomePage() {
     return (
       <div className="space-y-3">
         {baselineTraits.map((trait, index) => (
-          <div key={trait.id} className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border border-purple-100 hover:shadow-md transition-all duration-300">
+          <div
+            key={trait.id}
+            className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border border-purple-100 hover:shadow-md transition-all duration-300 cursor-pointer hover:scale-105 transform"
+            onClick={() => handleTraitClick(trait)}
+          >
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center space-x-1.5">
                 <div className="p-1 bg-purple-100 rounded-md">
@@ -211,16 +228,24 @@ export default function HomePage() {
                 </div>
                 <h4 className="text-sm font-bold text-purple-800">Assessment #{baselineTraits.length - index}</h4>
               </div>
-              <span className="text-xs text-gray-500 bg-white/60 px-2 py-0.5 rounded-full">
-                {new Date(trait.created_at).toLocaleDateString()}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500 bg-white/60 px-2 py-0.5 rounded-full">
+                  {new Date(trait.created_at).toLocaleDateString()}
+                </span>
+                <div className="p-1 bg-purple-100 rounded-md">
+                  <svg className="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-1.5">
               {Object.entries(trait.traits_result).slice(0, 4).map(([key, value]) => (
                 <div key={key} className="bg-white/60 p-2 rounded-md">
                   <div className="text-xs font-medium text-gray-700 truncate">{key}</div>
-                  <div className="text-xs text-purple-600 font-semibold">{String(value)}</div>
+                  <div className="text-xs text-purple-600 font-semibold">{String(value)}/100</div>
                 </div>
               ))}
             </div>
@@ -230,6 +255,10 @@ export default function HomePage() {
                 +{Object.keys(trait.traits_result).length - 4} more traits
               </div>
             )}
+
+            <div className="mt-2 text-xs text-purple-600 text-center font-medium">
+              Click để xem chi tiết →
+            </div>
           </div>
         ))}
       </div>
@@ -496,6 +525,11 @@ export default function HomePage() {
         onClose={handleDetailModalClose}
         intervention={selectedIntervention}
         onUpdate={handleInterventionUpdate}
+      />
+      <PersonalityTraitsModal
+        isOpen={isTraitsModalOpen}
+        onClose={handleTraitsModalClose}
+        trait={selectedTrait}
       />
     </>
   )

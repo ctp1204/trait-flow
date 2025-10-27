@@ -14,11 +14,21 @@ interface BaselineTrait {
   created_at: string;
 }
 
+interface Checkin {
+  id: string;
+  user_id: string;
+  mood_score: number;
+  energy_level: string;
+  free_text: string;
+  created_at: string;
+}
+
 export default function HistoryPage() {
   const router = useRouter()
   const supabase = createClient()
   const [baselineTraits, setBaselineTraits] = useState<BaselineTrait[]>([])
-  const [activeTab, setActiveTab] = useState<'checkins' | 'baseline_traits'>('baseline_traits')
+  const [checkins, setCheckins] = useState<Checkin[]>([])
+  const [activeTab, setActiveTab] = useState<'checkins' | 'baseline_traits'>('checkins')
 
   const fetchBaselineTraits = useCallback(async () => {
     const { data, error } = await supabase
