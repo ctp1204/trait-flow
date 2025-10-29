@@ -47,7 +47,7 @@ export default function HomePage() {
   const [timelineItems, setTimelineItems] = useState<Checkin[]>([])
   const [baselineTraits, setBaselineTraits] = useState<BaselineTrait[]>([])
   const [loading, setLoading] = useState(true)
-  const [hasOnboarded, setHasOnboarded] = useState(false)
+  const [, setHasOnboarded] = useState(false)
 
   const fetchTimelineData = useCallback(async () => {
     setLoading(true);
@@ -80,7 +80,7 @@ export default function HomePage() {
       const formattedData = checkins.map(checkin => {
         const intervention = checkin.interventions?.[0] || undefined;
         // The rest operator removes the 'interventions' array from the checkin object
-        const { interventions, ...restOfCheckin } = checkin;
+        const { interventions: _, ...restOfCheckin } = checkin;
         return {
           ...restOfCheckin,
           intervention,
@@ -372,7 +372,7 @@ export default function HomePage() {
                       {/* Timeline line */}
                       <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-200 via-purple-200 to-pink-200 rounded-full"></div>
 
-                      {timelineItems.map((checkin, index) => (
+                      {timelineItems.map((checkin) => (
                         <div key={checkin.id} className="relative flex items-start space-x-4 group">
                           {/* Timeline dot */}
                           <div className="relative z-10 flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-md group-hover:scale-105 transition-transform duration-300">
@@ -419,7 +419,7 @@ export default function HomePage() {
 
                               {checkin.free_text && (
                                 <div className="bg-white/60 p-3 rounded-lg border-l-3 border-blue-400">
-                                  <p className="text-sm text-gray-700 italic">"{checkin.free_text}"</p>
+                                  <p className="text-sm text-gray-700 italic">&quot;{checkin.free_text}&quot;</p>
                                 </div>
                               )}
                             </div>

@@ -90,7 +90,7 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
         borderColor: 'rgba(147, 51, 234, 1)',
         borderWidth: 1,
         callbacks: {
-          label: function(context: any) {
+          label: function(context: { label: string; parsed: { r: number } }) {
             return `${context.label}: ${context.parsed.r}/100`;
           }
         }

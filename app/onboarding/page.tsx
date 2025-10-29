@@ -323,7 +323,7 @@ export default function OnboardingPage() {
                 Assessment Complete!
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Here are your preliminary personality trait scores. You'll receive deeper insights through daily check-ins.
+                Here are your preliminary personality trait scores. You&apos;ll receive deeper insights through daily check-ins.
               </p>
             </div>
 

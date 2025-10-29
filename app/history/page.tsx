@@ -27,7 +27,7 @@ export default function HistoryPage() {
   const router = useRouter()
   const supabase = createClient()
   const [baselineTraits, setBaselineTraits] = useState<BaselineTrait[]>([])
-  const [checkins, setCheckins] = useState<Checkin[]>([])
+  const [, ] = useState<Checkin[]>([])
   const [activeTab, setActiveTab] = useState<'checkins' | 'baseline_traits'>('checkins')
 
   const fetchBaselineTraits = useCallback(async () => {

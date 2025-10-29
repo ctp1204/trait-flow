@@ -13,6 +13,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
   const [emotion, setEmotion] = useState(3) // Default emotion to 3
   const [energy, setEnergy] = useState('mid') // Default energy to medium
   const [notes, setNotes] = useState('')
+  const [isGeneratingAdvice, setIsGeneratingAdvice] = useState(false)
   const supabase = createClient()
 
   if (!isOpen) return null;
@@ -25,76 +26,87 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
       return
     }
 
-    const { data: checkinData, error } = await supabase
-      .from('checkins')
-      .insert([
-        {
-          user_id: user.id,
-          mood_score: emotion,
-          energy_level: energy.toLowerCase(),
-          free_text: notes,
+    setIsGeneratingAdvice(true)
+
+    try {
+      // Insert checkin first
+      const { data: checkinData, error } = await supabase
+        .from('checkins')
+        .insert([
+          {
+            user_id: user.id,
+            mood_score: emotion,
+            energy_level: energy.toLowerCase(),
+            free_text: notes,
+          },
+        ])
+        .select('id')
+        .single()
+
+      if (error) {
+        console.error('Error inserting checkin:', error)
+        setIsGeneratingAdvice(false)
+        return
+      }
+
+      const checkinId = checkinData.id;
+      onSubmit(emotion, energy, notes)
+
+      // Get user's personality traits for better advice
+      const { data: traitsData } = await supabase
+        .from('baseline_traits')
+        .select('traits_result')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      // Generate advice using OpenAI
+      const adviceResponse = await fetch('/api/generate-advice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ])
-      .select('id')
-      .single()
+        body: JSON.stringify({
+          moodScore: emotion,
+          energyLevel: energy,
+          notes: notes,
+          userTraits: traitsData?.traits_result || null
+        }),
+      })
 
-    if (error) {
-      console.error('Error inserting checkin:', error)
-      return
+      const { advice, template_type, fallback } = await adviceResponse.json()
+
+      // Insert intervention into the interventions table
+      const { error: interventionError } = await supabase
+        .from('interventions')
+        .insert([
+          {
+            user_id: user.id,
+            checkin_id: checkinId,
+            template_type: template_type,
+            message_payload: { advice: advice },
+            fallback: fallback || false,
+          },
+        ])
+
+      if (interventionError) {
+        console.error('Error inserting intervention:', interventionError)
+      }
+
+    } catch (error) {
+      console.error('Error in handleSubmit:', error)
+    } finally {
+      setIsGeneratingAdvice(false)
+      onClose() // Close modal after submission
+      // Reset form fields
+      setEmotion(3)
+      setEnergy('mid')
+      setNotes('')
     }
-
-    const checkinId = checkinData.id;
-
-    onSubmit(emotion, energy, notes)
-
-    // Generate advice based on emotion and notes
-    const { template_type, message } = generateAdvice(emotion, notes)
-
-    // Insert intervention into the interventions table
-    const { error: interventionError } = await supabase
-      .from('interventions')
-      .insert([
-        {
-          user_id: user.id,
-          checkin_id: checkinId,
-          template_type: template_type,
-          message_payload: { advice: message },
-        },
-      ])
-
-    if (interventionError) {
-      console.error('Error inserting intervention:', interventionError)
-      // Continue without returning, as checkin was successful
-    }
-
-    onClose() // Close modal after submission
-    // Reset form fields
-    setEmotion(3)
-    setEnergy('mid')
-    setNotes('')
   }
 
-  const generateAdvice = (emotionScore: number, userNotes: string): { template_type: string, message: string } => {
-    let advice = ''
-    let templateType = 'general_advice'
 
-    if (emotionScore <= 2) {
-      advice = "It sounds like you're having a tough time. Remember to be kind to yourself. Perhaps try a short mindfulness exercise or connect with a friend."
-      templateType = 'supportive_advice'
-    } else if (emotionScore === 3) {
-      advice = "You're feeling neutral today. Sometimes a small change can make a big difference. Consider a quick walk or listening to your favorite music."
-      templateType = 'neutral_boost'
-    } else if (emotionScore >= 4) {
-      advice = "Great to hear you're doing well! Keep up the positive momentum. What's one small thing you can do to maintain this feeling?"
-      templateType = 'positive_reinforcement'
-    }
-
-    if (userNotes.length > 0) {
-      advice += ` Your notes indicate: "${userNotes}". Reflect on these thoughts and see if there are any actionable steps you can take.`
-    }
-
-    return { template_type: templateType, message: advice };
-  }
 
   const moodLabels: { [key: number]: string } = {
     1: 'Bad',
@@ -192,7 +204,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 </svg>
               </div>
               <label className="text-base font-semibold text-gray-800">
-                What's your energy level?
+                What&apos;s your energy level?
               </label>
             </div>
 
@@ -270,13 +282,23 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
           <div className="pt-2">
             <button
               onClick={handleSubmit}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-xl"
+              disabled={isGeneratingAdvice}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-xl disabled:transform-none disabled:shadow-lg"
             >
               <div className="flex items-center justify-center space-x-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-                <span className="text-base">Submit Check-in</span>
+                {isGeneratingAdvice ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span className="text-base">Đang tạo gợi ý...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    <span className="text-base">Submit Check-in</span>
+                  </>
+                )}
               </div>
             </button>
           </div>
