@@ -1,0 +1,138 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "close": "Đóng",
+    "submit": "Gửi",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "finish": "Hoàn thành",
+    "continue": "Tiếp tục"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "dashboard": "Bảng điều khiển",
+    "history": "Lịch sử",
+    "settings": "Cài đặt",
+    "analytics": "Phân tích",
+    "signOut": "Đăng xuất"
+  },
+  "auth": {
+    "welcome": "Chào mừng",
+    "sendOtp": "Gửi OTP",
+    "verifyOtp": "Xác thực OTP",
+    "enterOtp": "Nhập OTP",
+    "email": "Email",
+    "otpSent": "OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư và nhập mã.",
+    "signInSuccessful": "Đăng nhập thành công!",
+    "emailConfirmed": "Email đã được xác nhận! Bạn đã đăng nhập."
+  },
+  "dashboard": {
+    "welcomeBack": "Chào mừng trở lại!",
+    "trackMoodDescription": "Theo dõi tâm trạng, năng lượng và hành trình phát triển cá nhân với những hiểu biết thông minh và khuyến nghị cá nhân hóa.",
+    "startCheckin": "Bắt đầu Check-in",
+    "yourJourneyTimeline": "Dòng thời gian hành trình của bạn",
+    "personalityTraits": "Đặc điểm tính cách",
+    "timelineEmpty": "Dòng thời gian của bạn đang trống",
+    "timelineEmptyDescription": "Bắt đầu hành trình bằng cách hoàn thành check-in đầu tiên!",
+    "beginJourney": "Bắt đầu hành trình",
+    "noBaselineTraits": "Chưa có đặc điểm cơ bản",
+    "noBaselineTraitsDescription": "Hoàn thành onboarding để xem đặc điểm tính cách của bạn",
+    "assessment": "Đánh giá",
+    "moreTraits": "đặc điểm khác",
+    "clickForDetails": "Click để xem chi tiết →"
+  },
+  "checkin": {
+    "dailyCheckin": "Check-in hàng ngày",
+    "moodQuestion": "Tâm trạng của bạn hôm nay thế nào?",
+    "energyQuestion": "Mức năng lượng của bạn như thế nào?",
+    "notesQuestion": "Còn điều gì khác trong tâm trí bạn không? (Tùy chọn)",
+    "notesPlaceholder": "Chia sẻ những gì bạn đang nghĩ hôm nay...",
+    "notesHelper": "Tùy chọn - giúp cá nhân hóa lời khuyên của bạn",
+    "submitCheckin": "Gửi Check-in",
+    "generatingAdvice": "Đang tạo gợi ý...",
+    "veryLow": "Rất thấp",
+    "neutral": "Bình thường",
+    "veryHigh": "Rất cao",
+    "low": "Thấp",
+    "medium": "Trung bình",
+    "high": "Cao",
+    "moodLabels": {
+      "1": "Tệ",
+      "2": "Thấp",
+      "3": "Bình thường",
+      "4": "Tốt",
+      "5": "Tuyệt vời"
+    },
+    "score": "Điểm"
+  },
+  "intervention": {
+    "interventionDetails": "Chi tiết Gợi ý",
+    "adviceForYou": "Lời khuyên dành cho bạn",
+    "createdAt": "Được tạo",
+    "rateAdvice": "Đánh giá lời khuyên (1-5 sao)",
+    "alreadyRated": "Đã đánh giá:",
+    "yourRating": "Đánh giá của bạn:",
+    "stars": "sao",
+    "saveRating": "Lưu đánh giá"
+  },
+  "personalityModal": {
+    "personalityDetails": "Chi tiết Đặc điểm Tính cách",
+    "assessmentDate": "Ngày đánh giá",
+    "radarChart": "Biểu đồ Đặc điểm Tính cách",
+    "traitDetails": "Chi tiết từng đặc điểm",
+    "descriptions": {
+      "Extraversion": {
+        "low": "Bạn có xu hướng hướng nội, thích sự yên tĩnh và tập trung vào thế giới nội tâm.",
+        "high": "Bạn có xu hướng hướng ngoại, năng động và thích giao tiếp với mọi người."
+      },
+      "Agreeableness": {
+        "low": "Bạn có xu hướng độc lập, thẳng thắn và ưu tiên lợi ích cá nhân.",
+        "high": "Bạn có xu hướng hợp tác, tin tưởng và quan tâm đến người khác."
+      },
+      "Conscientiousness": {
+        "low": "Bạn có xu hướng linh hoạt, tự phát và thích sự tự do.",
+        "high": "Bạn có xu hướng có tổ chức, kỷ luật và có trách nhiệm cao."
+      },
+      "Emotional Stability": {
+        "low": "Bạn có xu hướng nhạy cảm với cảm xúc và dễ bị ảnh hưởng bởi stress.",
+        "high": "Bạn có xu hướng bình tĩnh, ổn định và kiểm soát cảm xúc tốt."
+      },
+      "Openness to Experiences": {
+        "low": "Bạn có xu hướng thực tế, truyền thống và thích sự ổn định.",
+        "high": "Bạn có xu hướng sáng tạo, tò mò và thích khám phá điều mới."
+      }
+    },
+    "levels": {
+      "high": "Cao",
+      "mediumHigh": "Trung bình cao",
+      "mediumLow": "Trung bình thấp",
+      "low": "Thấp"
+    }
+  },
+  "onboarding": {
+    "welcomeToTipi": "Chào mừng đến với TIPI",
+    "tipiDescription": "Đây là bài kiểm tra tính cách ngắn sẽ giúp chúng tôi hiểu những đặc điểm độc đáo của bạn. Bao gồm 10 câu hỏi và sẽ mất khoảng 3 phút để hoàn thành.",
+    "startAssessment": "Bắt đầu Đánh giá",
+    "questionOf": "Câu hỏi {current} trong {total}",
+    "complete": "Hoàn thành",
+    "iSeeMyself": "Tôi thấy mình là:",
+    "disagreeStrongly": "Hoàn toàn không đồng ý",
+    "agreeStrongly": "Hoàn toàn đồng ý",
+    "assessmentComplete": "Đánh giá Hoàn thành!",
+    "preliminaryScores": "Đây là điểm số đặc điểm tính cách sơ bộ của bạn. Bạn sẽ nhận được hiểu biết sâu hơn thông qua việc check-in hàng ngày.",
+    "continueToDashboard": "Tiếp tục đến Bảng điều khiển"
+  },
+  "history": {
+    "yourHistory": "Lịch sử của bạn",
+    "baselineTraitsHistory": "Lịch sử Đặc điểm Cơ bản",
+    "traits": "Đặc điểm",
+    "createdAt": "Được tạo lúc",
+    "noTraitsFound": "Không tìm thấy đặc điểm cơ bản. Hoàn thành onboarding để xem lịch sử của bạn."
+  },
+  "footer": {
+    "copyright": "© 2025 Trait Flow. Trao quyền phát triển cá nhân thông qua hiểu biết thông minh.",
+    "allRightsReserved": "Tất cả quyền được bảo lưu."
+  }
+}

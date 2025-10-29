@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import { useI18n } from '@/lib/i18n/context';
 
 ChartJS.register(
   RadialLinearScale,
@@ -33,6 +34,8 @@ interface PersonalityTraitsModalProps {
 }
 
 export default function PersonalityTraitsModal({ isOpen, onClose, trait }: PersonalityTraitsModalProps) {
+  const { t } = useI18n();
+
   if (!isOpen || !trait) return null;
 
   const chartData = {
@@ -99,33 +102,8 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
   } as const;
 
   const getTraitDescription = (traitName: string, score: number) => {
-    const descriptions: { [key: string]: { low: string; high: string } } = {
-      'Extraversion': {
-        low: 'Bạn có xu hướng hướng nội, thích sự yên tĩnh và tập trung vào thế giới nội tâm.',
-        high: 'Bạn có xu hướng hướng ngoại, năng động và thích giao tiếp với mọi người.'
-      },
-      'Agreeableness': {
-        low: 'Bạn có xu hướng độc lập, thẳng thắn và ưu tiên lợi ích cá nhân.',
-        high: 'Bạn có xu hướng hợp tác, tin tưởng và quan tâm đến người khác.'
-      },
-      'Conscientiousness': {
-        low: 'Bạn có xu hướng linh hoạt, tự phát và thích sự tự do.',
-        high: 'Bạn có xu hướng có tổ chức, kỷ luật và có trách nhiệm cao.'
-      },
-      'Emotional Stability': {
-        low: 'Bạn có xu hướng nhạy cảm với cảm xúc và dễ bị ảnh hưởng bởi stress.',
-        high: 'Bạn có xu hướng bình tĩnh, ổn định và kiểm soát cảm xúc tốt.'
-      },
-      'Openness to Experiences': {
-        low: 'Bạn có xu hướng thực tế, truyền thống và thích sự ổn định.',
-        high: 'Bạn có xu hướng sáng tạo, tò mò và thích khám phá điều mới.'
-      }
-    };
-
-    const trait = descriptions[traitName];
-    if (!trait) return 'Không có mô tả cho đặc điểm này.';
-
-    return score >= 50 ? trait.high : trait.low;
+    const descriptionKey = score >= 50 ? 'high' : 'low';
+    return t(`personalityModal.descriptions.${traitName}.${descriptionKey}`);
   };
 
   return (
@@ -141,9 +119,9 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">Chi tiết Personality Traits</h2>
+                <h2 className="text-xl font-bold text-white">{t('personalityModal.personalityDetails')}</h2>
                 <p className="text-purple-100 text-xs">
-                  Đánh giá ngày: {new Date(trait.created_at).toLocaleDateString('vi-VN')}
+                  {t('personalityModal.assessmentDate')}: {new Date(trait.created_at).toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -164,7 +142,7 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
             {/* Chart Section */}
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-100">
               <h3 className="text-lg font-bold text-purple-800 mb-3 text-center">
-                Biểu đồ Personality Traits
+                {t('personalityModal.radarChart')}
               </h3>
               <div className="h-64">
                 <Radar data={chartData} options={chartOptions} />
@@ -174,7 +152,7 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
             {/* Traits Details */}
             <div className="space-y-3">
               <h3 className="text-lg font-bold text-gray-800 mb-3">
-                Chi tiết từng đặc điểm
+                {t('personalityModal.traitDetails')}
               </h3>
               {Object.entries(trait.traits_result).map(([key, value]) => {
                 const score = Number(value);
@@ -208,9 +186,9 @@ export default function PersonalityTraitsModal({ isOpen, onClose, trait }: Perso
                         score >= 30 ? 'bg-orange-400' : 'bg-red-400'
                       }`}></div>
                       <span className="text-xs font-medium text-gray-500">
-                        {score >= 70 ? 'Cao' :
-                         score >= 50 ? 'Trung bình cao' :
-                         score >= 30 ? 'Trung bình thấp' : 'Thấp'}
+                        {score >= 70 ? t('personalityModal.levels.high') :
+                         score >= 50 ? t('personalityModal.levels.mediumHigh') :
+                         score >= 30 ? t('personalityModal.levels.mediumLow') : t('personalityModal.levels.low')}
                       </span>
                     </div>
                   </div>

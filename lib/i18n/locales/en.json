@@ -1,0 +1,138 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "continue": "Continue"
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "history": "History",
+    "settings": "Settings",
+    "analytics": "Analytics",
+    "signOut": "Sign Out"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "enterOtp": "Enter OTP",
+    "email": "Email",
+    "otpSent": "OTP has been sent to your email. Please check your inbox and enter the code.",
+    "signInSuccessful": "Sign in successful!",
+    "emailConfirmed": "Email confirmed! You are now signed in."
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome Back!",
+    "trackMoodDescription": "Track your mood, energy, and personal growth journey with intelligent insights and personalized recommendations.",
+    "startCheckin": "Start Your Check-in",
+    "yourJourneyTimeline": "Your Journey Timeline",
+    "personalityTraits": "Personality Traits",
+    "timelineEmpty": "Your timeline is empty",
+    "timelineEmptyDescription": "Start your journey by completing your first check-in!",
+    "beginJourney": "Begin Your Journey",
+    "noBaselineTraits": "No baseline traits yet",
+    "noBaselineTraitsDescription": "Complete onboarding to see your personality traits",
+    "assessment": "Assessment",
+    "moreTraits": "more traits",
+    "clickForDetails": "Click for details →"
+  },
+  "checkin": {
+    "dailyCheckin": "Daily Check-in",
+    "moodQuestion": "How is your mood today?",
+    "energyQuestion": "What's your energy level?",
+    "notesQuestion": "Anything else on your mind? (Optional)",
+    "notesPlaceholder": "Share what's on your mind today...",
+    "notesHelper": "Optional - helps personalize your coaching",
+    "submitCheckin": "Submit Check-in",
+    "generatingAdvice": "Generating advice...",
+    "veryLow": "Very Low",
+    "neutral": "Neutral",
+    "veryHigh": "Very High",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "moodLabels": {
+      "1": "Bad",
+      "2": "Low",
+      "3": "Neutral",
+      "4": "Good",
+      "5": "Great"
+    },
+    "score": "Score"
+  },
+  "intervention": {
+    "interventionDetails": "Intervention Details",
+    "adviceForYou": "Advice for you",
+    "createdAt": "Created",
+    "rateAdvice": "Rate the advice (1-5 stars)",
+    "alreadyRated": "Already rated:",
+    "yourRating": "Your rating:",
+    "stars": "stars",
+    "saveRating": "Save Rating"
+  },
+  "personalityModal": {
+    "personalityDetails": "Personality Traits Details",
+    "assessmentDate": "Assessment date",
+    "radarChart": "Personality Traits Chart",
+    "traitDetails": "Trait Details",
+    "descriptions": {
+      "Extraversion": {
+        "low": "You tend to be introverted, prefer quiet environments and focus on your inner world.",
+        "high": "You tend to be extroverted, energetic and enjoy interacting with people."
+      },
+      "Agreeableness": {
+        "low": "You tend to be independent, straightforward and prioritize personal interests.",
+        "high": "You tend to be cooperative, trusting and care about others."
+      },
+      "Conscientiousness": {
+        "low": "You tend to be flexible, spontaneous and prefer freedom.",
+        "high": "You tend to be organized, disciplined and highly responsible."
+      },
+      "Emotional Stability": {
+        "low": "You tend to be sensitive to emotions and easily affected by stress.",
+        "high": "You tend to be calm, stable and have good emotional control."
+      },
+      "Openness to Experiences": {
+        "low": "You tend to be practical, traditional and prefer stability.",
+        "high": "You tend to be creative, curious and enjoy exploring new things."
+      }
+    },
+    "levels": {
+      "high": "High",
+      "mediumHigh": "Medium High",
+      "mediumLow": "Medium Low",
+      "low": "Low"
+    }
+  },
+  "onboarding": {
+    "welcomeToTipi": "Welcome to TIPI",
+    "tipiDescription": "This is a short personality test that will help us understand your unique traits. It includes 10 questions and will take about 3 minutes to complete.",
+    "startAssessment": "Start Assessment",
+    "questionOf": "Question {current} of {total}",
+    "complete": "Complete",
+    "iSeeMyself": "I see myself as:",
+    "disagreeStrongly": "Disagree strongly",
+    "agreeStrongly": "Agree strongly",
+    "assessmentComplete": "Assessment Complete!",
+    "preliminaryScores": "Here are your preliminary personality trait scores. You'll receive deeper insights through daily check-ins.",
+    "continueToDashboard": "Continue to Dashboard"
+  },
+  "history": {
+    "yourHistory": "Your History",
+    "baselineTraitsHistory": "Baseline Traits History",
+    "traits": "Traits",
+    "createdAt": "Created at",
+    "noTraitsFound": "No baseline traits found. Complete onboarding to see your history."
+  },
+  "footer": {
+    "copyright": "© 2025 Trait Flow. Empowering personal growth through intelligent insights.",
+    "allRightsReserved": "All rights reserved."
+  }
+}

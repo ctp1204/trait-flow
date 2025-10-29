@@ -7,17 +7,23 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const { moodScore, energyLevel, notes, userTraits } = await request.json()
+    const { moodScore, energyLevel, notes, userTraits, locale = 'vi' } = await request.json()
 
     // Tạo prompt dựa trên thông tin checkin
-    const prompt = createPrompt(moodScore, energyLevel, notes, userTraits)
+    const prompt = createPrompt(moodScore, energyLevel, notes, userTraits, locale)
+
+    const systemPrompts = {
+      vi: "Bạn là một chuyên gia tâm lý và coach cá nhân. Hãy đưa ra lời khuyên ngắn gọn, tích cực và thực tế bằng tiếng Việt dựa trên tình trạng cảm xúc và năng lượng của người dùng. Lời khuyên nên từ 2-3 câu, dễ hiểu và có thể thực hiện được.",
+      en: "You are a psychology expert and personal coach. Provide concise, positive, and practical advice in English based on the user's emotional state and energy level. The advice should be 2-3 sentences, easy to understand and actionable.",
+      ja: "あなたは心理学の専門家でありパーソナルコーチです。ユーザーの感情状態とエネルギーレベルに基づいて、簡潔で前向きで実用的なアドバイスを日本語で提供してください。アドバイスは2-3文で、理解しやすく実行可能なものにしてください。"
+    }
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: "Bạn là một chuyên gia tâm lý và coach cá nhân. Hãy đưa ra lời khuyên ngắn gọn, tích cực và thực tế bằng tiếng Việt dựa trên tình trạng cảm xúc và năng lượng của người dùng. Lời khuyên nên từ 2-3 câu, dễ hiểu và có thể thực hiện được."
+          content: systemPrompts[locale as keyof typeof systemPrompts] || systemPrompts.vi
         },
         {
           role: "user",
@@ -59,7 +65,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function createPrompt(moodScore: number, energyLevel: string, notes: string, userTraits?: Record<string, number>): string {
+function createPrompt(moodScore: number, energyLevel: string, notes: string, userTraits?: Record<string, number>, locale: string = 'vi'): string {
   let moodDescription = ''
   switch (moodScore) {
     case 1:

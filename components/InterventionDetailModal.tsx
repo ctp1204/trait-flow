@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useI18n } from '@/lib/i18n/context'
 
 interface InterventionDetailModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface InterventionDetailModalProps {
 export default function InterventionDetailModal({ isOpen, onClose, intervention, onUpdate }: InterventionDetailModalProps) {
   const [feedbackScore, setFeedbackScore] = useState<number | null>(null)
   const supabase = createClient()
+  const { t } = useI18n()
 
   useEffect(() => {
     if (intervention) {
@@ -62,7 +64,7 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white">Chi tiết Gợi ý</h2>
+              <h2 className="text-lg font-bold text-white">{t('intervention.interventionDetails')}</h2>
             </div>
             <button
               onClick={onClose}
@@ -85,7 +87,7 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                 </svg>
               </div>
               <label className="text-base font-semibold text-gray-800">
-                Lời khuyên dành cho bạn
+                {t('intervention.adviceForYou')}
               </label>
             </div>
 
@@ -96,7 +98,7 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
-                  Được tạo: {new Date(intervention.created_at).toLocaleDateString('vi-VN')} lúc {new Date(intervention.created_at).toLocaleTimeString('vi-VN')}
+                  {t('intervention.createdAt')}: {new Date(intervention.created_at).toLocaleDateString()} {new Date(intervention.created_at).toLocaleTimeString()}
                 </p>
               </div>
             </div>
@@ -111,7 +113,7 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                 </svg>
               </div>
               <label className="text-base font-semibold text-gray-800">
-                Đánh giá lời khuyên (1-5 sao)
+                {t('intervention.rateAdvice')}
               </label>
             </div>
 
@@ -143,9 +145,9 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                 <div className="text-center">
                   <div className="inline-flex items-center space-x-2 bg-white/60 px-3 py-1.5 rounded-full">
                     <span className="text-sm font-medium text-gray-700">
-                      {intervention.feedback_score !== null ? 'Đã đánh giá:' : 'Đánh giá của bạn:'}
+                      {intervention.feedback_score !== null ? t('intervention.alreadyRated') : t('intervention.yourRating')}
                     </span>
-                    <span className="text-sm font-bold text-yellow-600">{feedbackScore}/5 sao</span>
+                    <span className="text-sm font-bold text-yellow-600">{feedbackScore}/5 {t('intervention.stars')}</span>
                   </div>
                 </div>
               )}
@@ -159,14 +161,14 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
                 onClick={onClose}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out"
               >
-                Hủy
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleUpdateFeedback}
                 disabled={feedbackScore === null}
                 className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-xl disabled:transform-none disabled:shadow-lg"
               >
-                Lưu đánh giá
+                {t('intervention.saveRating')}
               </button>
             </div>
           )}

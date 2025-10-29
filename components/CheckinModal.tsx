@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useI18n } from '@/lib/i18n/context'
 
 interface CheckinModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
   const [notes, setNotes] = useState('')
   const [isGeneratingAdvice, setIsGeneratingAdvice] = useState(false)
   const supabase = createClient()
+  const { t, locale } = useI18n()
 
   if (!isOpen) return null;
 
@@ -71,7 +73,8 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
           moodScore: emotion,
           energyLevel: energy,
           notes: notes,
-          userTraits: traitsData?.traits_result || null
+          userTraits: traitsData?.traits_result || null,
+          locale: locale
         }),
       })
 
@@ -109,11 +112,11 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
 
 
   const moodLabels: { [key: number]: string } = {
-    1: 'Bad',
-    2: 'Low',
-    3: 'Neutral',
-    4: 'Good',
-    5: 'Great'
+    1: t('checkin.moodLabels.1'),
+    2: t('checkin.moodLabels.2'),
+    3: t('checkin.moodLabels.3'),
+    4: t('checkin.moodLabels.4'),
+    5: t('checkin.moodLabels.5')
   }
 
   const moodEmojis: { [key: number]: string } = {
@@ -136,7 +139,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-white">Daily Check-in</h2>
+              <h2 className="text-lg font-bold text-white">{t('checkin.dailyCheckin')}</h2>
             </div>
             <button
               onClick={onClose}
@@ -160,7 +163,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 </svg>
               </div>
               <label htmlFor="emotion" className="text-base font-semibold text-gray-800">
-                How is your mood today?
+                {t('checkin.moodQuestion')}
               </label>
             </div>
 
@@ -178,9 +181,9 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 }}
               />
               <div className="flex justify-between text-xs px-1 mt-1 text-gray-600">
-                <span className="font-medium">Very Low</span>
-                <span className="font-medium">Neutral</span>
-                <span className="font-medium">Very High</span>
+                <span className="font-medium">{t('checkin.veryLow')}</span>
+                <span className="font-medium">{t('checkin.neutral')}</span>
+                <span className="font-medium">{t('checkin.veryHigh')}</span>
               </div>
 
               <div className="text-center mt-3 bg-white/60 rounded-lg py-2 border border-white/40">
@@ -188,7 +191,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                   <span className="text-2xl">{moodEmojis[emotion]}</span>
                   <div>
                     <div className="text-base font-bold text-gray-800">{moodLabels[emotion]}</div>
-                    <div className="text-xs text-gray-600">Score: {emotion}/5</div>
+                    <div className="text-xs text-gray-600">{t('checkin.score')}: {emotion}/5</div>
                   </div>
                 </div>
               </div>
@@ -204,7 +207,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 </svg>
               </div>
               <label className="text-base font-semibold text-gray-800">
-                What&apos;s your energy level?
+                {t('checkin.energyQuestion')}
               </label>
             </div>
 
@@ -234,7 +237,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                     <span className={`text-sm font-medium ${
                       energy === level ? 'text-white' : 'text-gray-700'
                     }`}>
-                      {level === 'mid' ? 'Medium' : level}
+                      {level === 'mid' ? t('checkin.medium') : level === 'Low' ? t('checkin.low') : t('checkin.high')}
                     </span>
                   </button>
                 ))}
@@ -251,7 +254,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 </svg>
               </div>
               <label htmlFor="notes" className="text-base font-semibold text-gray-800">
-                Anything else on your mind? (Optional)
+                {t('checkin.notesQuestion')}
               </label>
             </div>
 
@@ -262,12 +265,12 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full p-3 bg-white/60 border border-green-200 rounded-lg text-gray-700 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none text-sm"
-                placeholder="Share what's on your mind today..."
+                placeholder={t('checkin.notesPlaceholder')}
                 maxLength={280}
               ></textarea>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-xs text-gray-500">
-                  Optional - helps personalize your coaching
+                  {t('checkin.notesHelper')}
                 </span>
                 <span className={`text-xs font-medium ${
                   notes.length > 250 ? 'text-red-500' : 'text-gray-500'
@@ -289,14 +292,14 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 {isGeneratingAdvice ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span className="text-base">Đang tạo gợi ý...</span>
+                    <span className="text-base">{t('checkin.generatingAdvice')}</span>
                   </>
                 ) : (
                   <>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                     </svg>
-                    <span className="text-base">Submit Check-in</span>
+                    <span className="text-base">{t('checkin.submitCheckin')}</span>
                   </>
                 )}
               </div>

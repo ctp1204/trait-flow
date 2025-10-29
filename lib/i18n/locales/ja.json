@@ -1,0 +1,138 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "close": "閉じる",
+    "submit": "送信",
+    "back": "戻る",
+    "next": "次へ",
+    "finish": "完了",
+    "continue": "続行"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "dashboard": "ダッシュボード",
+    "history": "履歴",
+    "settings": "設定",
+    "analytics": "分析",
+    "signOut": "サインアウト"
+  },
+  "auth": {
+    "welcome": "ようこそ",
+    "sendOtp": "OTP送信",
+    "verifyOtp": "OTP認証",
+    "enterOtp": "OTPを入力",
+    "email": "メール",
+    "otpSent": "OTPがメールに送信されました。受信箱を確認してコードを入力してください。",
+    "signInSuccessful": "サインインが成功しました！",
+    "emailConfirmed": "メールが確認されました！サインインしています。"
+  },
+  "dashboard": {
+    "welcomeBack": "おかえりなさい！",
+    "trackMoodDescription": "気分、エネルギー、個人の成長の旅を、インテリジェントな洞察とパーソナライズされた推奨事項で追跡します。",
+    "startCheckin": "チェックインを開始",
+    "yourJourneyTimeline": "あなたの旅のタイムライン",
+    "personalityTraits": "性格特性",
+    "timelineEmpty": "タイムラインが空です",
+    "timelineEmptyDescription": "最初のチェックインを完了して旅を始めましょう！",
+    "beginJourney": "旅を始める",
+    "noBaselineTraits": "ベースライン特性がまだありません",
+    "noBaselineTraitsDescription": "オンボーディングを完了して性格特性を確認してください",
+    "assessment": "評価",
+    "moreTraits": "その他の特性",
+    "clickForDetails": "詳細を見るにはクリック →"
+  },
+  "checkin": {
+    "dailyCheckin": "日次チェックイン",
+    "moodQuestion": "今日の気分はいかがですか？",
+    "energyQuestion": "エネルギーレベルはどうですか？",
+    "notesQuestion": "他に何か気になることはありますか？（任意）",
+    "notesPlaceholder": "今日の気持ちを共有してください...",
+    "notesHelper": "任意 - コーチングをパーソナライズするのに役立ちます",
+    "submitCheckin": "チェックインを送信",
+    "generatingAdvice": "アドバイスを生成中...",
+    "veryLow": "非常に低い",
+    "neutral": "普通",
+    "veryHigh": "非常に高い",
+    "low": "低い",
+    "medium": "中程度",
+    "high": "高い",
+    "moodLabels": {
+      "1": "悪い",
+      "2": "低い",
+      "3": "普通",
+      "4": "良い",
+      "5": "素晴らしい"
+    },
+    "score": "スコア"
+  },
+  "intervention": {
+    "interventionDetails": "介入の詳細",
+    "adviceForYou": "あなたへのアドバイス",
+    "createdAt": "作成日時",
+    "rateAdvice": "アドバイスを評価（1-5つ星）",
+    "alreadyRated": "評価済み：",
+    "yourRating": "あなたの評価：",
+    "stars": "つ星",
+    "saveRating": "評価を保存"
+  },
+  "personalityModal": {
+    "personalityDetails": "性格特性の詳細",
+    "assessmentDate": "評価日",
+    "radarChart": "性格特性チャート",
+    "traitDetails": "特性の詳細",
+    "descriptions": {
+      "Extraversion": {
+        "low": "あなたは内向的で、静かな環境を好み、内面の世界に集中する傾向があります。",
+        "high": "あなたは外向的で、エネルギッシュで人との交流を楽しむ傾向があります。"
+      },
+      "Agreeableness": {
+        "low": "あなたは独立的で、率直で個人的な利益を優先する傾向があります。",
+        "high": "あなたは協力的で、信頼し、他者を気にかける傾向があります。"
+      },
+      "Conscientiousness": {
+        "low": "あなたは柔軟で、自発的で自由を好む傾向があります。",
+        "high": "あなたは組織的で、規律正しく、高い責任感を持つ傾向があります。"
+      },
+      "Emotional Stability": {
+        "low": "あなたは感情に敏感で、ストレスの影響を受けやすい傾向があります。",
+        "high": "あなたは冷静で、安定しており、感情をよくコントロールする傾向があります。"
+      },
+      "Openness to Experiences": {
+        "low": "あなたは実用的で、伝統的で安定を好む傾向があります。",
+        "high": "あなたは創造的で、好奇心旺盛で新しいことを探求するのを楽しむ傾向があります。"
+      }
+    },
+    "levels": {
+      "high": "高い",
+      "mediumHigh": "中程度高い",
+      "mediumLow": "中程度低い",
+      "low": "低い"
+    }
+  },
+  "onboarding": {
+    "welcomeToTipi": "TIPIへようこそ",
+    "tipiDescription": "これはあなたのユニークな特性を理解するのに役立つ短い性格テストです。10の質問が含まれており、完了するのに約3分かかります。",
+    "startAssessment": "評価を開始",
+    "questionOf": "質問 {current} / {total}",
+    "complete": "完了",
+    "iSeeMyself": "私は自分自身を次のように見ています：",
+    "disagreeStrongly": "強く反対",
+    "agreeStrongly": "強く同意",
+    "assessmentComplete": "評価完了！",
+    "preliminaryScores": "これがあなたの予備的な性格特性スコアです。日々のチェックインを通じてより深い洞察を得られます。",
+    "continueToDashboard": "ダッシュボードに続く"
+  },
+  "history": {
+    "yourHistory": "あなたの履歴",
+    "baselineTraitsHistory": "ベースライン特性履歴",
+    "traits": "特性",
+    "createdAt": "作成日時",
+    "noTraitsFound": "ベースライン特性が見つかりません。オンボーディングを完了して履歴を確認してください。"
+  },
+  "footer": {
+    "copyright": "© 2025 Trait Flow. インテリジェントな洞察を通じて個人の成長を支援します。",
+    "allRightsReserved": "すべての権利を保有しています。"
+  }
+}

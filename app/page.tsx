@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import CheckinModal from '@/components/CheckinModal'
 import InterventionDetailModal from '@/components/InterventionDetailModal'
 import PersonalityTraitsModal from '@/components/PersonalityTraitsModal'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
 
 interface Checkin {
@@ -38,6 +40,7 @@ interface BaselineTrait {
 export default function HomePage() {
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useI18n()
   const [userEmail, setUserEmail] = useState<string | undefined>('')
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
@@ -205,8 +208,8 @@ export default function HomePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
           </div>
-          <h4 className="text-sm font-semibold text-gray-700 mb-1">No baseline traits yet</h4>
-          <p className="text-xs text-gray-500">Complete onboarding to see your personality traits</p>
+          <h4 className="text-sm font-semibold text-gray-700 mb-1">{t('dashboard.noBaselineTraits')}</h4>
+          <p className="text-xs text-gray-500">{t('dashboard.noBaselineTraitsDescription')}</p>
         </div>
       );
     }
@@ -226,7 +229,7 @@ export default function HomePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                   </svg>
                 </div>
-                <h4 className="text-sm font-bold text-purple-800">Assessment #{baselineTraits.length - index}</h4>
+                <h4 className="text-sm font-bold text-purple-800">{t('dashboard.assessment')} #{baselineTraits.length - index}</h4>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500 bg-white/60 px-2 py-0.5 rounded-full">
@@ -252,12 +255,12 @@ export default function HomePage() {
 
             {Object.keys(trait.traits_result).length > 4 && (
               <div className="mt-2 text-xs text-gray-500 text-center">
-                +{Object.keys(trait.traits_result).length - 4} more traits
+                +{Object.keys(trait.traits_result).length - 4} {t('dashboard.moreTraits')}
               </div>
             )}
 
             <div className="mt-2 text-xs text-purple-600 text-center font-medium">
-              Click để xem chi tiết →
+              {t('dashboard.clickForDetails')}
             </div>
           </div>
         ))}
@@ -280,19 +283,20 @@ export default function HomePage() {
             <nav className="hidden md:flex items-center space-x-4">
               <Link href="/" className="text-white/90 hover:text-white flex items-center space-x-1.5 px-3 py-1.5 rounded-md hover:bg-white/10 transition-all duration-200">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path></svg>
-                <span className="text-sm font-medium">Dashboard</span>
+                <span className="text-sm font-medium">{t('navigation.dashboard')}</span>
               </Link>
               <Link href="/history" className="text-white/90 hover:text-white flex items-center space-x-1.5 px-3 py-1.5 rounded-md hover:bg-white/10 transition-all duration-200">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.745A9.863 9.863 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                <span className="text-sm font-medium">History</span>
+                <span className="text-sm font-medium">{t('navigation.history')}</span>
               </Link>
               <Link href="/settings" className="text-white/90 hover:text-white flex items-center space-x-1.5 px-3 py-1.5 rounded-md hover:bg-white/10 transition-all duration-200">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                <span className="text-sm font-medium">Analytics</span>
+                <span className="text-sm font-medium">{t('navigation.analytics')}</span>
               </Link>
             </nav>
           </div>
           <div className="flex items-center space-x-3">
+            <LanguageSwitcher />
             <div className="hidden sm:flex items-center space-x-2 bg-white/10 rounded-md px-3 py-1.5 backdrop-blur-sm">
               <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -304,7 +308,7 @@ export default function HomePage() {
               className="text-white/90 hover:text-white flex items-center space-x-1.5 px-3 py-1.5 rounded-md hover:bg-white/10 transition-all duration-200"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-              <span className="text-sm font-medium">Sign out</span>
+              <span className="text-sm font-medium">{t('navigation.signOut')}</span>
             </button>
           </div>
         </header>
@@ -320,10 +324,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-indigo-800 to-purple-800 bg-clip-text text-transparent mb-3">
-                Welcome Back!
+                {t('dashboard.welcomeBack')}
               </h1>
               <p className="text-base text-gray-600 max-w-xl mx-auto leading-relaxed">
-                Track your mood, energy, and personal growth journey with intelligent insights and personalized recommendations.
+                {t('dashboard.trackMoodDescription')}
               </p>
             </div>
 
@@ -337,7 +341,7 @@ export default function HomePage() {
                   <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                   </svg>
-                  <span className="text-base">Start Your Check-in</span>
+                  <span className="text-base">{t('dashboard.startCheckin')}</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
               </button>
@@ -357,7 +361,7 @@ export default function HomePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                           </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-white">Your Journey Timeline</h3>
+                        <h3 className="text-lg font-bold text-white">{t('dashboard.yourJourneyTimeline')}</h3>
                       </div>
                     </div>
 
@@ -365,7 +369,7 @@ export default function HomePage() {
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                      <span className="ml-3 text-gray-600 text-base">Loading your timeline...</span>
+                      <span className="ml-3 text-gray-600 text-base">{t('common.loading')}</span>
                     </div>
                   ) : timelineItems.length > 0 ? (
                     <div className="space-y-6 relative">
@@ -392,7 +396,7 @@ export default function HomePage() {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                   </div>
-                                  <h4 className="font-bold text-base text-blue-800">Daily Check-in</h4>
+                                  <h4 className="font-bold text-base text-blue-800">{t('checkin.dailyCheckin')}</h4>
                                 </div>
                                 <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
                                   {new Date(checkin.created_at).toLocaleDateString()}
@@ -434,7 +438,7 @@ export default function HomePage() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                                       </svg>
                                     </div>
-                                    <h4 className="font-bold text-base text-green-800">Personalized Insight</h4>
+                                    <h4 className="font-bold text-base text-green-800">{t('intervention.adviceForYou')}</h4>
                                   </div>
                                   <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
                                     {new Date(checkin.intervention.created_at).toLocaleDateString()}
@@ -461,13 +465,13 @@ export default function HomePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                       </div>
-                      <h4 className="text-lg font-semibold text-gray-700 mb-2">Your timeline is empty</h4>
-                      <p className="text-sm text-gray-500 mb-4">Start your journey by completing your first check-in!</p>
+                      <h4 className="text-lg font-semibold text-gray-700 mb-2">{t('dashboard.timelineEmpty')}</h4>
+                      <p className="text-sm text-gray-500 mb-4">{t('dashboard.timelineEmptyDescription')}</p>
                       <button
                         onClick={() => setIsCheckinModalOpen(true)}
                         className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-600 hover:to-purple-700 transition-all duration-300"
                       >
-                        Begin Your Journey
+                        {t('dashboard.beginJourney')}
                       </button>
                     </div>
                   )}
@@ -485,7 +489,7 @@ export default function HomePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                           </svg>
                         </div>
-                        <h3 className="text-lg font-bold text-white">Personality Traits</h3>
+                        <h3 className="text-lg font-bold text-white">{t('dashboard.personalityTraits')}</h3>
                       </div>
                     </div>
 
@@ -511,7 +515,7 @@ export default function HomePage() {
               </div>
               <span className="text-base font-bold">Trait Flow</span>
             </div>
-            <p className="text-sm text-gray-300">&copy; 2025 Trait Flow. Empowering personal growth through intelligent insights.</p>
+            <p className="text-sm text-gray-300">{t('footer.copyright')}</p>
           </div>
         </footer>
       </div>
