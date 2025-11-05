@@ -134,5 +134,54 @@
   "footer": {
     "copyright": "© 2025 Trait Flow. Trao quyền phát triển cá nhân thông qua hiểu biết thông minh.",
     "allRightsReserved": "Tất cả quyền được bảo lưu."
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "subtitle": "Quản lý tài khoản và tùy chọn của bạn",
+    "profile": {
+      "title": "Hồ sơ",
+      "subtitle": "Cập nhật thông tin cá nhân",
+      "avatar": "Ảnh đại diện",
+      "changeAvatar": "Thay đổi ảnh đại diện",
+      "uploadImage": "Tải ảnh lên",
+      "name": "Họ và tên",
+      "email": "Địa chỉ email",
+      "bio": "Tiểu sử",
+      "bioPlaceholder": "Hãy kể về bản thân bạn...",
+      "saveProfile": "Lưu hồ sơ"
+    },
+    "account": {
+      "title": "Tài khoản",
+      "subtitle": "Quản lý cài đặt tài khoản",
+      "changePassword": "Đổi mật khẩu",
+      "currentPassword": "Mật khẩu hiện tại",
+      "newPassword": "Mật khẩu mới",
+      "confirmPassword": "Xác nhận mật khẩu mới",
+      "updatePassword": "Cập nhật mật khẩu",
+      "deleteAccount": "Xóa tài khoản",
+      "deleteWarning": "Hành động này không thể hoàn tác"
+    },
+    "preferences": {
+      "title": "Tùy chọn",
+      "subtitle": "Tùy chỉnh trải nghiệm của bạn",
+      "language": "Ngôn ngữ",
+      "notifications": "Thông báo",
+      "emailNotifications": "Thông báo email",
+      "pushNotifications": "Thông báo đẩy",
+      "theme": "Giao diện",
+      "lightMode": "Chế độ sáng",
+      "darkMode": "Chế độ tối",
+      "autoMode": "Chế độ tự động"
+    },
+    "privacy": {
+      "title": "Quyền riêng tư & Bảo mật",
+      "subtitle": "Kiểm soát cài đặt quyền riêng tư",
+      "dataExport": "Xuất dữ liệu",
+      "dataExportDesc": "Tải xuống tất cả dữ liệu của bạn",
+      "dataDelete": "Xóa tất cả dữ liệu",
+      "dataDeleteDesc": "Xóa vĩnh viễn tất cả dữ liệu của bạn"
+    },
+    "success": "Cài đặt đã được cập nhật thành công!",
+    "error": "Không thể cập nhật cài đặt. Vui lòng thử lại."
   }
 }

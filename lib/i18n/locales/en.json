@@ -134,5 +134,54 @@
   "footer": {
     "copyright": "© 2025 Trait Flow. Empowering personal growth through intelligent insights.",
     "allRightsReserved": "All rights reserved."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Update your personal information",
+      "avatar": "Profile Picture",
+      "changeAvatar": "Change Avatar",
+      "uploadImage": "Upload Image",
+      "name": "Full Name",
+      "email": "Email Address",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about yourself...",
+      "saveProfile": "Save Profile"
+    },
+    "account": {
+      "title": "Account",
+      "subtitle": "Manage your account settings",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "updatePassword": "Update Password",
+      "deleteAccount": "Delete Account",
+      "deleteWarning": "This action cannot be undone"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "subtitle": "Customize your experience",
+      "language": "Language",
+      "notifications": "Notifications",
+      "emailNotifications": "Email Notifications",
+      "pushNotifications": "Push Notifications",
+      "theme": "Theme",
+      "lightMode": "Light Mode",
+      "darkMode": "Dark Mode",
+      "autoMode": "Auto Mode"
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "subtitle": "Control your privacy settings",
+      "dataExport": "Export Data",
+      "dataExportDesc": "Download all your data",
+      "dataDelete": "Delete All Data",
+      "dataDeleteDesc": "Permanently delete all your data"
+    },
+    "success": "Settings updated successfully!",
+    "error": "Failed to update settings. Please try again."
   }
 }
