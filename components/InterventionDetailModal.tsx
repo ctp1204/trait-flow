@@ -33,22 +33,52 @@ export default function InterventionDetailModal({ isOpen, onClose, intervention,
   if (!isOpen || !intervention) return null;
 
   const handleUpdateFeedback = async () => {
-    if (!intervention) return;
+    if (!intervention || feedbackScore === null) return;
 
-    const { error } = await supabase
-      .from('interventions')
-      .update({
-        fallback: true,
-        feedback_score: feedbackScore,
-        feedback_at: new Date().toISOString(), // Add this line to update feedback_at
+    try {
+      // Call the new rating statistics update API
+      const response = await fetch('/api/update-rating-stats', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          interventionId: intervention.id,
+          feedbackScore: feedbackScore
+        }),
       })
-      .eq('id', intervention.id)
 
-    if (error) {
-      console.error('Error updating intervention feedback:', error)
-    } else {
+      const result = await response.json()
+
+      if (!response.ok) {
+        console.error('Error updating rating stats:', result.error)
+        // Fallback to direct database update if API fails
+        const { error } = await supabase
+          .from('interventions')
+          .update({
+            feedback_score: feedbackScore,
+            feedback_at: new Date().toISOString(),
+          })
+          .eq('id', intervention.id)
+
+        if (error) {
+          console.error('Error updating intervention feedback:', error)
+          return
+        }
+      } else {
+        // Log successful rating update
+        console.log('✅ Rating statistics updated successfully:', result.updatedStats)
+
+        // Show user feedback about rating improvement if detected
+        if (result.updatedStats?.hasImproved) {
+          console.log('🎉 User rating improvement detected!')
+        }
+      }
+
       onUpdate()
       onClose()
+    } catch (error) {
+      console.error('Error in handleUpdateFeedback:', error)
     }
   }
 

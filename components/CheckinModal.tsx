@@ -78,9 +78,27 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
         }),
       })
 
-      const { advice, template_type, fallback } = await adviceResponse.json()
+      const {
+        advice,
+        template_type,
+        fallback,
+        enhanced_prompt_used,
+        prompt_variation_number,
+        rating_improvement_triggered,
+        user_rating_stats
+      } = await adviceResponse.json()
 
-      // Insert intervention into the interventions table
+      // Log enhanced prompt usage for debugging
+      if (enhanced_prompt_used) {
+        console.log('🔧 Enhanced prompt was used for this advice generation', {
+          userId: user.id,
+          averageRating: user_rating_stats?.average_rating,
+          totalRatings: user_rating_stats?.total_ratings,
+          variationNumber: prompt_variation_number
+        })
+      }
+
+      // Insert intervention into the interventions table with enhancement metadata
       const { error: interventionError } = await supabase
         .from('interventions')
         .insert([
@@ -90,6 +108,9 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
             template_type: template_type,
             message_payload: { advice: advice },
             fallback: fallback || false,
+            rating_improvement_triggered: rating_improvement_triggered || false,
+            enhanced_prompt_used: enhanced_prompt_used || false,
+            prompt_variation_number: prompt_variation_number || 0,
           },
         ])
 
