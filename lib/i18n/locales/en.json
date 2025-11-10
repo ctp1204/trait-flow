@@ -135,6 +135,82 @@
     "copyright": "© 2025 Trait Flow. Empowering personal growth through intelligent insights.",
     "allRightsReserved": "All rights reserved."
   },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Track your emotional journey and personal growth",
+    "timeRange": {
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days",
+      "all": "All time"
+    },
+    "summary": {
+      "averageMood": "Average Mood",
+      "totalCheckins": "Total Check-ins",
+      "currentStreak": "Current Streak",
+      "averageRating": "Average Rating",
+      "moodScale": "Scale 1-5",
+      "inThisPeriod": "In this period",
+      "longestStreak": "Longest: {count} days",
+      "adviceCount": "{count} advice"
+    },
+    "charts": {
+      "moodTrend": "Mood Trend",
+      "energyDistribution": "Energy Distribution",
+      "weeklyPattern": "Weekly Pattern",
+      "moodEnergyCorrelation": "Mood-Energy Correlation",
+      "adviceQuality": "Advice Quality",
+      "ratingDistribution": "Rating Distribution",
+      "enhancementImpact": "Enhancement Impact"
+    },
+    "labels": {
+      "mood": "Mood",
+      "energy": "Energy",
+      "date": "Date",
+      "count": "Count",
+      "average": "Average",
+      "checkins": "check-ins",
+      "advice": "advice",
+      "moodScore": "Mood Score",
+      "energyLevel": "Energy Level",
+      "notes": "Notes",
+      "low": "Low",
+      "mid": "Mid",
+      "high": "High",
+      "before": "Before",
+      "after": "After",
+      "improvement": "improvement",
+      "enhanced": "Enhanced",
+      "improvementRate": "Improvement Rate",
+      "averageScore": "Average Score"
+    },
+    "insights": {
+      "title": "Insights",
+      "mostCommonEnergy": "Most common energy level: {level}",
+      "bestDay": "Best day",
+      "needAttention": "Needs attention",
+      "correlation": "When you have {level} energy, average mood is {mood}/5"
+    },
+    "weekdays": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "empty": {
+      "title": "No data yet",
+      "description": "You don't have any check-ins yet. Create your first check-in to see analytics!",
+      "action": "Create first check-in"
+    },
+    "error": {
+      "title": "An error occurred",
+      "retry": "Retry"
+    },
+    "loading": "Loading analytics data..."
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your account and preferences",

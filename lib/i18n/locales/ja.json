@@ -135,6 +135,82 @@
     "copyright": "© 2025 Trait Flow. インテリジェントな洞察を通じて個人の成長を支援します。",
     "allRightsReserved": "すべての権利を保有しています。"
   },
+  "analytics": {
+    "title": "分析",
+    "subtitle": "感情の旅と個人の成長を追跡",
+    "timeRange": {
+      "7d": "7日間",
+      "30d": "30日間",
+      "90d": "90日間",
+      "all": "すべて"
+    },
+    "summary": {
+      "averageMood": "平均気分",
+      "totalCheckins": "総チェックイン数",
+      "currentStreak": "現在の連続記録",
+      "averageRating": "平均評価",
+      "moodScale": "スケール 1-5",
+      "inThisPeriod": "この期間",
+      "longestStreak": "最長: {count}日",
+      "adviceCount": "{count}件のアドバイス"
+    },
+    "charts": {
+      "moodTrend": "気分の傾向",
+      "energyDistribution": "エネルギー分布",
+      "weeklyPattern": "週間パターン",
+      "moodEnergyCorrelation": "気分とエネルギーの相関",
+      "adviceQuality": "アドバイスの質",
+      "ratingDistribution": "評価分布",
+      "enhancementImpact": "改善の影響"
+    },
+    "labels": {
+      "mood": "気分",
+      "energy": "エネルギー",
+      "date": "日付",
+      "count": "数",
+      "average": "平均",
+      "checkins": "チェックイン",
+      "advice": "アドバイス",
+      "moodScore": "気分スコア",
+      "energyLevel": "エネルギーレベル",
+      "notes": "メモ",
+      "low": "低い",
+      "mid": "中程度",
+      "high": "高い",
+      "before": "前",
+      "after": "後",
+      "improvement": "改善",
+      "enhanced": "改善済み",
+      "improvementRate": "改善率",
+      "averageScore": "平均スコア"
+    },
+    "insights": {
+      "title": "インサイト",
+      "mostCommonEnergy": "最も一般的なエネルギーレベル: {level}",
+      "bestDay": "最良の日",
+      "needAttention": "注意が必要",
+      "correlation": "{level}エネルギーの時、平均気分は{mood}/5です"
+    },
+    "weekdays": {
+      "sunday": "日曜日",
+      "monday": "月曜日",
+      "tuesday": "火曜日",
+      "wednesday": "水曜日",
+      "thursday": "木曜日",
+      "friday": "金曜日",
+      "saturday": "土曜日"
+    },
+    "empty": {
+      "title": "データがありません",
+      "description": "まだチェックインがありません。最初のチェックインを作成して分析を表示しましょう！",
+      "action": "最初のチェックインを作成"
+    },
+    "error": {
+      "title": "エラーが発生しました",
+      "retry": "再試行"
+    },
+    "loading": "分析データを読み込み中..."
+  },
   "settings": {
     "title": "設定",
     "subtitle": "アカウントと設定を管理",

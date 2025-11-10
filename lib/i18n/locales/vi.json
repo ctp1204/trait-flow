@@ -135,6 +135,82 @@
     "copyright": "© 2025 Trait Flow. Trao quyền phát triển cá nhân thông qua hiểu biết thông minh.",
     "allRightsReserved": "Tất cả quyền được bảo lưu."
   },
+  "analytics": {
+    "title": "Phân tích",
+    "subtitle": "Theo dõi hành trình cảm xúc và sự phát triển cá nhân của bạn",
+    "timeRange": {
+      "7d": "7 ngày",
+      "30d": "30 ngày",
+      "90d": "90 ngày",
+      "all": "Tất cả"
+    },
+    "summary": {
+      "averageMood": "Tâm trạng trung bình",
+      "totalCheckins": "Tổng check-in",
+      "currentStreak": "Chuỗi ngày hiện tại",
+      "averageRating": "Đánh giá trung bình",
+      "moodScale": "Thang điểm 1-5",
+      "inThisPeriod": "Trong khoảng thời gian này",
+      "longestStreak": "Dài nhất: {count} ngày",
+      "adviceCount": "{count} lời khuyên"
+    },
+    "charts": {
+      "moodTrend": "Xu hướng tâm trạng",
+      "energyDistribution": "Phân bố năng lượng",
+      "weeklyPattern": "Mẫu hàng tuần",
+      "moodEnergyCorrelation": "Mối tương quan Tâm trạng - Năng lượng",
+      "adviceQuality": "Chất lượng lời khuyên",
+      "ratingDistribution": "Phân bố đánh giá",
+      "enhancementImpact": "Tác động của cải thiện prompt"
+    },
+    "labels": {
+      "mood": "Tâm trạng",
+      "energy": "Năng lượng",
+      "date": "Ngày",
+      "count": "Số lượng",
+      "average": "Trung bình",
+      "checkins": "check-ins",
+      "advice": "lời khuyên",
+      "moodScore": "Điểm tâm trạng",
+      "energyLevel": "Mức năng lượng",
+      "notes": "Ghi chú",
+      "low": "Thấp",
+      "mid": "Trung bình",
+      "high": "Cao",
+      "before": "Trước",
+      "after": "Sau",
+      "improvement": "cải thiện",
+      "enhanced": "Đã cải thiện",
+      "improvementRate": "Tỷ lệ cải thiện",
+      "averageScore": "Điểm trung bình"
+    },
+    "insights": {
+      "title": "Insights",
+      "mostCommonEnergy": "Mức năng lượng phổ biến nhất: {level}",
+      "bestDay": "Ngày tốt nhất",
+      "needAttention": "Ngày cần chú ý",
+      "correlation": "Khi bạn có năng lượng {level}, tâm trạng trung bình là {mood}/5"
+    },
+    "weekdays": {
+      "sunday": "Chủ nhật",
+      "monday": "Thứ 2",
+      "tuesday": "Thứ 3",
+      "wednesday": "Thứ 4",
+      "thursday": "Thứ 5",
+      "friday": "Thứ 6",
+      "saturday": "Thứ 7"
+    },
+    "empty": {
+      "title": "Chưa có dữ liệu",
+      "description": "Bạn chưa có check-in nào. Hãy tạo check-in đầu tiên để xem phân tích!",
+      "action": "Tạo check-in đầu tiên"
+    },
+    "error": {
+      "title": "Đã xảy ra lỗi",
+      "retry": "Thử lại"
+    },
+    "loading": "Đang tải dữ liệu phân tích..."
+  },
   "settings": {
     "title": "Cài đặt",
     "subtitle": "Quản lý tài khoản và tùy chọn của bạn",
