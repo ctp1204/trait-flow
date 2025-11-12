@@ -30,7 +30,16 @@ export function WeeklyPatternChart({ weeklyData }: WeeklyPatternChartProps) {
     current.averageMood < prev.averageMood && current.count > 0 ? current : prev
   );
 
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    payload?: any[];
+    label?: string;
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3">

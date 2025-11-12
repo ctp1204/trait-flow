@@ -67,7 +67,14 @@ export function EnergyDistributionChart({
     }
   };
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    payload?: any[];
+  }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       const percentage = ((data.value / total) * 100).toFixed(1);
@@ -110,7 +117,10 @@ export function EnergyDistributionChart({
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={(props: any) => {
+            label={(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              props: any
+            ) => {
               const { name, percent } = props;
               return `${LABELS[name as keyof typeof LABELS]} ${(percent * 100).toFixed(0)}%`;
             }}
