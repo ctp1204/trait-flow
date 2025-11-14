@@ -3,6 +3,8 @@
 import { checkOnboardingStatusAndRedirect, createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
+import { useI18n } from '@/lib/i18n/context'
+import LanguageSelector from '@/components/LanguageSelector'
 
 function LoginPageComponent() {
   const [email, setEmail] = useState('')
@@ -14,6 +16,7 @@ function LoginPageComponent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
+  const { t } = useI18n()
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -41,7 +44,7 @@ function LoginPageComponent() {
           router.replace('/login', undefined);
         } else {
           setMessageType('success');
-          setMessage('Email confirmed! You are now signed in.');
+          setMessage(t('auth.emailConfirmed'));
           // Delay redirection slightly so the user can see the message
           setTimeout(() => {
             checkOnboardingStatusAndRedirect(router);
@@ -72,7 +75,7 @@ function LoginPageComponent() {
     } else {
       setOtpSent(true)
       setMessageType('success');
-      setMessage('OTP has been sent to your email. Please check your inbox and enter the code.')
+      setMessage(t('auth.otpSent'))
     }
 
     setIsLoading(false)
@@ -94,7 +97,7 @@ function LoginPageComponent() {
       setIsLoading(false)
     } else {
       setMessageType('success');
-      setMessage('Sign in successful!')
+      setMessage(t('auth.signInSuccessful'))
       checkOnboardingStatusAndRedirect(router)
     }
   }
@@ -109,7 +112,12 @@ function LoginPageComponent() {
   }
 
    return (
-     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4 relative">
+       {/* Language Selector - Top Right */}
+       <div className="absolute top-4 right-4 z-10">
+         <LanguageSelector />
+       </div>
+
        <div className="w-full max-w-md">
          {/* Logo and Brand */}
          <div className="text-center mb-8">
@@ -122,7 +130,7 @@ function LoginPageComponent() {
              Trait Flow
            </h1>
            <p className="text-gray-600 text-sm">
-             Track your mood, energy, and personal growth journey
+             {t('dashboard.trackMoodDescription')}
            </p>
          </div>
 
@@ -136,7 +144,7 @@ function LoginPageComponent() {
                  </svg>
                </div>
                <h2 className="text-xl font-bold text-white">
-                 {!otpSent ? 'Sign In' : 'Verify Code'}
+                 {!otpSent ? t('auth.welcome') : t('auth.verifyOtp')}
                </h2>
              </div>
            </div>
@@ -169,7 +177,7 @@ function LoginPageComponent() {
                  <>
                    <div className="space-y-2">
                      <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                       Email Address
+                       {t('auth.email')}
                      </label>
                      <div className="relative">
                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -180,7 +188,7 @@ function LoginPageComponent() {
                        <input
                          id="email"
                          type="email"
-                         placeholder="Enter your email"
+                         placeholder={t('auth.email')}
                          value={email}
                          onChange={(e) => setEmail(e.target.value)}
                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/60 backdrop-blur-sm"
@@ -197,14 +205,14 @@ function LoginPageComponent() {
                      {isLoading ? (
                        <div className="flex items-center justify-center space-x-2">
                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                         <span>Sending...</span>
+                         <span>{t('common.loading')}</span>
                        </div>
                      ) : (
                        <div className="flex items-center justify-center space-x-2">
                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                          </svg>
-                         <span>Send Verification Code</span>
+                         <span>{t('auth.sendOtp')}</span>
                        </div>
                      )}
                    </button>
@@ -213,7 +221,7 @@ function LoginPageComponent() {
                  <>
                    <div className="space-y-2">
                      <label htmlFor="otp" className="text-sm font-medium text-gray-700">
-                       Verification Code
+                       {t('auth.enterOtp')}
                      </label>
                      <div className="relative">
                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -224,7 +232,7 @@ function LoginPageComponent() {
                        <input
                          id="otp"
                          type="text"
-                         placeholder="Enter 6-digit code"
+                         placeholder={t('auth.enterOtp')}
                          value={otp}
                          onChange={(e) => setOtp(e.target.value)}
                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/60 backdrop-blur-sm text-center text-lg tracking-widest"
@@ -233,7 +241,7 @@ function LoginPageComponent() {
                        />
                      </div>
                      <p className="text-xs text-gray-500">
-                       Check your email for the verification code
+                       {t('auth.otpSent')}
                      </p>
                    </div>
 
@@ -246,14 +254,14 @@ function LoginPageComponent() {
                        {isLoading ? (
                          <div className="flex items-center justify-center space-x-2">
                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                           <span>Verifying...</span>
+                           <span>{t('common.loading')}</span>
                          </div>
                        ) : (
                          <div className="flex items-center justify-center space-x-2">
                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                            </svg>
-                           <span>Verify & Sign In</span>
+                           <span>{t('auth.verifyOtp')}</span>
                          </div>
                        )}
                      </button>
@@ -267,7 +275,7 @@ function LoginPageComponent() {
                        }}
                        className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2 transition-colors duration-200"
                      >
-                       ← Back to email
+                       ← {t('common.back')}
                      </button>
                    </div>
                  </>
@@ -287,16 +295,20 @@ function LoginPageComponent() {
    )
 }
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="flex items-center space-x-3">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <span className="text-gray-600 font-medium">Loading...</span>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="flex items-center space-x-3">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-          <span className="text-gray-600 font-medium">Loading...</span>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<LoadingFallback />}>
       <LoginPageComponent />
     </Suspense>
   )
