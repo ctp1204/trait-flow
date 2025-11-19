@@ -7,7 +7,7 @@ import { useI18n } from '@/lib/i18n/context'
 interface CheckinModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (emotion: number, energy: string, notes: string) => void;
+  onSubmit: (emotion: number, energy: string, notes: string, suggestedHabit?: string) => void;
 }
 
 export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModalProps) {
@@ -52,7 +52,6 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
       }
 
       const checkinId = checkinData.id;
-      onSubmit(emotion, energy, notes)
 
       // Get user's personality traits for better advice
       const { data: traitsData } = await supabase
@@ -80,6 +79,7 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
 
       const {
         advice,
+        suggested_habit,
         template_type,
         fallback,
         enhanced_prompt_used,
@@ -117,6 +117,9 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
       if (interventionError) {
         console.error('Error inserting intervention:', interventionError)
       }
+
+      // Call onSubmit with suggested habit if available
+      onSubmit(emotion, energy, notes, suggested_habit)
 
     } catch (error) {
       console.error('Error in handleSubmit:', error)
@@ -238,26 +241,23 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                   <button
                     key={level}
                     onClick={() => setEnergy(level)}
-                    className={`group flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all duration-300 ${
-                      energy === level
-                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 border-yellow-500 shadow-md scale-105'
-                        : 'bg-white/60 border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
-                    }`}
+                    className={`group flex flex-col items-center justify-center p-2 rounded-lg border-2 transition-all duration-300 ${energy === level
+                      ? 'bg-gradient-to-br from-yellow-400 to-orange-500 border-yellow-500 shadow-md scale-105'
+                      : 'bg-white/60 border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
+                      }`}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full mb-1.5 transition-all duration-300 ${
-                        energy === level
-                          ? 'bg-white shadow-sm'
-                          : level === 'Low'
-                            ? 'bg-red-400'
-                            : level === 'mid'
-                              ? 'bg-yellow-400'
-                              : 'bg-green-400'
-                      }`}
+                      className={`w-4 h-4 rounded-full mb-1.5 transition-all duration-300 ${energy === level
+                        ? 'bg-white shadow-sm'
+                        : level === 'Low'
+                          ? 'bg-red-400'
+                          : level === 'mid'
+                            ? 'bg-yellow-400'
+                            : 'bg-green-400'
+                        }`}
                     ></div>
-                    <span className={`text-sm font-medium ${
-                      energy === level ? 'text-white' : 'text-gray-700'
-                    }`}>
+                    <span className={`text-sm font-medium ${energy === level ? 'text-white' : 'text-gray-700'
+                      }`}>
                       {level === 'mid' ? t('checkin.medium') : level === 'Low' ? t('checkin.low') : t('checkin.high')}
                     </span>
                   </button>
@@ -293,9 +293,8 @@ export default function CheckinModal({ isOpen, onClose, onSubmit }: CheckinModal
                 <span className="text-xs text-gray-500">
                   {t('checkin.notesHelper')}
                 </span>
-                <span className={`text-xs font-medium ${
-                  notes.length > 250 ? 'text-red-500' : 'text-gray-500'
-                }`}>
+                <span className={`text-xs font-medium ${notes.length > 250 ? 'text-red-500' : 'text-gray-500'
+                  }`}>
                   {notes.length}/280
                 </span>
               </div>

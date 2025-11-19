@@ -7,6 +7,7 @@ import CheckinModal from '@/components/CheckinModal'
 import InterventionDetailModal from '@/components/InterventionDetailModal'
 import PersonalityTraitsModal from '@/components/PersonalityTraitsModal'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import HabitTracker from '@/components/HabitTracker'
 import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
 
@@ -153,7 +154,17 @@ export default function HomePage() {
     router.refresh()
   }
 
-  const handleCheckinSubmit = () => {
+  const handleCheckinSubmit = async (emotion: number, energy: string, notes: string, suggestedHabit?: string) => {
+    if (suggestedHabit) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase.from('habits').insert({
+          user_id: user.id,
+          title: suggestedHabit,
+          is_completed: false
+        })
+      }
+    }
     fetchTimelineData();
   }
 
@@ -370,121 +381,124 @@ export default function HomePage() {
                     </div>
 
                     <div className="p-6">
-                  {loading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                      <span className="ml-3 text-gray-600 text-base">{t('common.loading')}</span>
-                    </div>
-                  ) : timelineItems.length > 0 ? (
-                    <div className="space-y-6 relative">
-                      {/* Timeline line */}
-                      <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-200 via-purple-200 to-pink-200 rounded-full"></div>
+                      {loading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                          <span className="ml-3 text-gray-600 text-base">{t('common.loading')}</span>
+                        </div>
+                      ) : timelineItems.length > 0 ? (
+                        <div className="space-y-6 relative">
+                          {/* Timeline line */}
+                          <div className="absolute left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-200 via-purple-200 to-pink-200 rounded-full"></div>
 
-                      {timelineItems.map((checkin) => (
-                        <div key={checkin.id} className="relative flex items-start space-x-4 group">
-                          {/* Timeline dot */}
-                          <div className="relative z-10 flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-md group-hover:scale-105 transition-transform duration-300">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 space-y-3">
-                            {/* Check-in Card */}
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl shadow-md border border-blue-100 hover:shadow-lg transition-all duration-300 group-hover:-translate-y-0.5">
-                              <div className="flex justify-between items-start mb-3">
-                                <div className="flex items-center space-x-2">
-                                  <div className="p-1.5 bg-blue-100 rounded-md">
-                                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                  </div>
-                                  <h4 className="font-bold text-base text-blue-800">{t('checkin.dailyCheckin')}</h4>
-                                </div>
-                                <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
-                                  {new Date(checkin.created_at).toLocaleDateString()}
-                                </span>
+                          {timelineItems.map((checkin) => (
+                            <div key={checkin.id} className="relative flex items-start space-x-4 group">
+                              {/* Timeline dot */}
+                              <div className="relative z-10 flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-md group-hover:scale-105 transition-transform duration-300">
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                               </div>
 
-                              <div className="flex items-center space-x-3 mb-3">
-                                <div className="flex items-center space-x-1.5">
-                                  <span className="text-xl">{checkin.mood_score >= 4 ? '😊' : checkin.mood_score >= 2 ? '😐' : '😞'}</span>
-                                  <div className="flex space-x-0.5">
-                                    {[...Array(5)].map((_, i) => (
-                                      <div key={i} className={`w-2 h-2 rounded-full ${i < checkin.mood_score ? 'bg-yellow-400' : 'bg-gray-200'}`}></div>
-                                    ))}
-                                  </div>
-                                </div>
-                                <div className="flex items-center space-x-1.5">
-                                  <div className={`w-2 h-2 rounded-full ${
-                                    checkin.energy_level === 'high' ? 'bg-green-400' :
-                                    checkin.energy_level === 'mid' ? 'bg-yellow-400' : 'bg-red-400'
-                                  }`}></div>
-                                  <span className="text-sm text-gray-700 font-medium capitalize">{checkin.energy_level} Energy</span>
-                                </div>
-                              </div>
-
-                              {checkin.free_text && (
-                                <div className="bg-white/60 p-3 rounded-lg border-l-3 border-blue-400">
-                                  <p className="text-sm text-gray-700 italic">&quot;{checkin.free_text}&quot;</p>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Intervention Card */}
-                            {checkin.intervention && (
-                              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl shadow-md border border-green-100 hover:shadow-lg transition-all duration-300 group-hover:-translate-y-0.5 cursor-pointer" onClick={() => handleInterventionClick(checkin.intervention!)}>
-                                <div className="flex justify-between items-start mb-3">
-                                  <div className="flex items-center space-x-2">
-                                    <div className="p-1.5 bg-green-100 rounded-md">
-                                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                      </svg>
+                              {/* Content */}
+                              <div className="flex-1 space-y-3">
+                                {/* Check-in Card */}
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl shadow-md border border-blue-100 hover:shadow-lg transition-all duration-300 group-hover:-translate-y-0.5">
+                                  <div className="flex justify-between items-start mb-3">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="p-1.5 bg-blue-100 rounded-md">
+                                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                      </div>
+                                      <h4 className="font-bold text-base text-blue-800">{t('checkin.dailyCheckin')}</h4>
                                     </div>
-                                    <h4 className="font-bold text-base text-green-800">{t('intervention.adviceForYou')}</h4>
+                                    <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
+                                      {new Date(checkin.created_at).toLocaleDateString()}
+                                    </span>
                                   </div>
-                                  <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
-                                    {new Date(checkin.intervention.created_at).toLocaleDateString()}
-                                  </span>
+
+                                  <div className="flex items-center space-x-3 mb-3">
+                                    <div className="flex items-center space-x-1.5">
+                                      <span className="text-xl">{checkin.mood_score >= 4 ? '😊' : checkin.mood_score >= 2 ? '😐' : '😞'}</span>
+                                      <div className="flex space-x-0.5">
+                                        {[...Array(5)].map((_, i) => (
+                                          <div key={i} className={`w-2 h-2 rounded-full ${i < checkin.mood_score ? 'bg-yellow-400' : 'bg-gray-200'}`}></div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center space-x-1.5">
+                                      <div className={`w-2 h-2 rounded-full ${checkin.energy_level === 'high' ? 'bg-green-400' :
+                                        checkin.energy_level === 'mid' ? 'bg-yellow-400' : 'bg-red-400'
+                                        }`}></div>
+                                      <span className="text-sm text-gray-700 font-medium capitalize">{checkin.energy_level} Energy</span>
+                                    </div>
+                                  </div>
+
+                                  {checkin.free_text && (
+                                    <div className="bg-white/60 p-3 rounded-lg border-l-3 border-blue-400">
+                                      <p className="text-sm text-gray-700 italic">&quot;{checkin.free_text}&quot;</p>
+                                    </div>
+                                  )}
                                 </div>
 
-                                <p className="text-sm text-gray-800 mb-3 leading-relaxed">{checkin.intervention.message_payload.advice}</p>
+                                {/* Intervention Card */}
+                                {checkin.intervention && (
+                                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl shadow-md border border-green-100 hover:shadow-lg transition-all duration-300 group-hover:-translate-y-0.5 cursor-pointer" onClick={() => handleInterventionClick(checkin.intervention!)}>
+                                    <div className="flex justify-between items-start mb-3">
+                                      <div className="flex items-center space-x-2">
+                                        <div className="p-1.5 bg-green-100 rounded-md">
+                                          <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                          </svg>
+                                        </div>
+                                        <h4 className="font-bold text-base text-green-800">{t('intervention.adviceForYou')}</h4>
+                                      </div>
+                                      <span className="text-xs text-gray-500 bg-white/60 px-2 py-1 rounded-full">
+                                        {new Date(checkin.intervention.created_at).toLocaleDateString()}
+                                      </span>
+                                    </div>
 
-                                {checkin.intervention.feedback_score && (
-                                  <div className="flex justify-end">
-                                    {renderStars(checkin.intervention.feedback_score)}
+                                    <p className="text-sm text-gray-800 mb-3 leading-relaxed">{checkin.intervention.message_payload.advice}</p>
+
+                                    {checkin.intervention.feedback_score && (
+                                      <div className="flex justify-end">
+                                        {renderStars(checkin.intervention.feedback_score)}
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-semibold text-gray-700 mb-2">{t('dashboard.timelineEmpty')}</h4>
-                      <p className="text-sm text-gray-500 mb-4">{t('dashboard.timelineEmptyDescription')}</p>
-                      <button
-                        onClick={() => setIsCheckinModalOpen(true)}
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-600 hover:to-purple-700 transition-all duration-300"
-                      >
-                        {t('dashboard.beginJourney')}
-                      </button>
-                    </div>
-                  )}
+                      ) : (
+                        <div className="text-center py-12">
+                          <div className="w-16 h-16 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                          </div>
+                          <h4 className="text-lg font-semibold text-gray-700 mb-2">{t('dashboard.timelineEmpty')}</h4>
+                          <p className="text-sm text-gray-500 mb-4">{t('dashboard.timelineEmptyDescription')}</p>
+                          <button
+                            onClick={() => setIsCheckinModalOpen(true)}
+                            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-600 hover:to-purple-700 transition-all duration-300"
+                          >
+                            {t('dashboard.beginJourney')}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Baseline Traits Section - Takes 1/3 of the space */}
-                <div className="lg:col-span-1">
+                {/* Right Column: Sidebar (4 cols) */}
+                <div className="lg:col-span-1 space-y-6">
+                  {/* Habit Tracker Widget */}
+                  <HabitTracker />
+
+                  {/* Personality Traits Widget */}
                   <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
                     <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4">
                       <div className="flex items-center space-x-2">
@@ -496,7 +510,6 @@ export default function HomePage() {
                         <h3 className="text-lg font-bold text-white">{t('dashboard.personalityTraits')}</h3>
                       </div>
                     </div>
-
                     <div className="p-4">
                       {renderBaselineTraits()}
                     </div>
